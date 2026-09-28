@@ -1,0 +1,36 @@
+# model weights and large binaries never belong in this repository
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.gguf
+*.onnx
+*.sft
+models/
+
+# ComfyUI run artefacts and images (client work is under NDA)
+output/
+input/
+temp/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.exr
+*.tif
+*.tiff
+
+# local environment / secrets
+.env
+.env.*
+*.token
+*.log
+.venv/
+venv/
+__pycache__/
+*.pyc
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

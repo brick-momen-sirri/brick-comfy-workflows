@@ -1,0 +1,437 @@
+{
+  "1": {
+    "inputs": {
+      "image": "input.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Input Image"
+    }
+  },
+  "2": {
+    "inputs": {
+      "value": true
+    },
+    "class_type": "PrimitiveBoolean",
+    "_meta": {
+      "title": "Toggle · RAW Enhancement"
+    }
+  },
+  "3": {
+    "inputs": {
+      "value": ""
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Edit Prompt (used only when RAW is off)"
+    }
+  },
+  "20": {
+    "inputs": {
+      "switch": [
+        "2",
+        0
+      ],
+      "on_false": [
+        "153:100",
+        0
+      ],
+      "on_true": [
+        "157:120",
+        0
+      ]
+    },
+    "class_type": "ComfySwitchNode",
+    "_meta": {
+      "title": "Switch · Model (RAW LoRA)"
+    }
+  },
+  "21": {
+    "inputs": {
+      "switch": [
+        "2",
+        0
+      ],
+      "on_false": [
+        "3",
+        0
+      ],
+      "on_true": [
+        "157:121",
+        0
+      ]
+    },
+    "class_type": "ComfySwitchNode",
+    "_meta": {
+      "title": "Switch · Prompt (RAW caption)"
+    }
+  },
+  "22": {
+    "inputs": {
+      "filename_prefix": "BrickVisual/Flux2Klein_RAW",
+      "images": [
+        "161:151",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Result"
+    }
+  },
+  "153:100": {
+    "inputs": {
+      "unet_name": "flux-2-klein-9b-fp8.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Flux.2 Klein 9B (fp8)"
+    }
+  },
+  "153:101": {
+    "inputs": {
+      "clip_name": "qwen_3_8b_fp8mixed.safetensors",
+      "type": "flux2",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Text Encoder (Qwen3 8B fp8)"
+    }
+  },
+  "153:102": {
+    "inputs": {
+      "vae_name": "flux2-vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Flux.2 VAE"
+    }
+  },
+  "155:110": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "megapixels": 1,
+      "resolution_steps": 1,
+      "image": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "ImageScaleToTotalPixels",
+    "_meta": {
+      "title": "Scale to ≈ 1 MP"
+    }
+  },
+  "155:111": {
+    "inputs": {
+      "image": [
+        "155:110",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Target Size"
+    }
+  },
+  "155:112": {
+    "inputs": {
+      "width": [
+        "155:111",
+        0
+      ],
+      "height": [
+        "155:111",
+        1
+      ],
+      "interpolation": "lanczos",
+      "method": "pad",
+      "condition": "always",
+      "multiple_of": 32,
+      "image": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "ImageResize+",
+    "_meta": {
+      "title": "Pad to Multiple of 32"
+    }
+  },
+  "157:120": {
+    "inputs": {
+      "lora_name": "Klein_9B_bvfinish_v01.safetensors",
+      "strength_model": 1,
+      "model": [
+        "153:100",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "RAW LoRA (bvfinish)"
+    }
+  },
+  "157:121": {
+    "inputs": {
+      "model_name": "Qwen3VL-4B-Instruct-Q8_0.gguf",
+      "preset_prompt": "🖼️ Detailed Description",
+      "custom_prompt": "You are generating captions for training a LoRA that enhances raw architectural renders into high-quality, photorealistic architectural visualizations.\n\nYour task is to describe the final enhanced image as a polished architectural result, not the editing process.\n\nInstructions:\n\n1. Describe the architectural scene clearly and concisely:\n   - building type, such as modern villa, apartment complex, office interior\n   - view type, such as exterior, interior, aerial, street-level, courtyard, lobby\n   - key materials, such as concrete, glass, wood, stone\n   - environment, such as landscaped garden, urban street, vegetation, furniture\n   - lighting and time of day, such as soft daylight, overcast, dusk, warm interior lighting\n   - sky color, such as blue sky, white sky, black starless sky\n\n2. Always describe the image as a high-quality final architectural visualization, using consistent phrases such as:\n   - polished architectural visualization\n   - photoreal finish\n   - natural color grading\n   - realistic materials\n   - believable lighting\n   - refined vegetation\n   - premium archviz quality\n\n3. Do not describe editing actions or software processes.\n   Avoid phrases like:\n   - photoshop enhanced\n   - increased contrast\n   - boosted vibrance\n   - color corrected\n\n4. Do not mention that the image was previously raw or unfinished.\n\n5. Keep the caption as a single comma-separated sentence.\n\n6. Keep the length moderate, around 12–20 words.\n\n7. Maintain consistent wording across captions for the final-look qualities, while varying the scene description.\n\n8. Always include the trigger token at the beginning:\n\nbvfinish\n\nOutput format:\n\nReturn only the caption. Do not include explanations.\n\nExample outputs:\n\nbvfinish, modern villa exterior, concrete and wood facade, landscaped garden, soft daylight, polished architectural visualization, photoreal finish, natural color grading, realistic materials, believable lighting\n\nbvfinish, office lobby interior, stone flooring, wood wall panels, reception desk, warm indirect lighting, premium architectural visualization, realistic materials, natural color grading, refined lighting\n\nbvfinish, residential apartment courtyard, balconies, vegetation, pedestrian path, overcast daylight, polished archviz render, photoreal finish, balanced color, realistic foliage",
+      "max_tokens": 512,
+      "keep_model_loaded": true,
+      "seed": 1713137694,
+      "image": [
+        "155:112",
+        0
+      ]
+    },
+    "class_type": "AILab_QwenVL_GGUF",
+    "_meta": {
+      "title": "RAW Caption (Qwen3-VL)"
+    }
+  },
+  "159:130": {
+    "inputs": {
+      "text": [
+        "21",
+        0
+      ],
+      "clip": [
+        "153:101",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive Prompt"
+    }
+  },
+  "159:131": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "153:101",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Negative Prompt (empty)"
+    }
+  },
+  "159:132": {
+    "inputs": {
+      "pixels": [
+        "155:112",
+        0
+      ],
+      "vae": [
+        "153:102",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "Encode Reference"
+    }
+  },
+  "159:133": {
+    "inputs": {
+      "conditioning": [
+        "159:130",
+        0
+      ],
+      "latent": [
+        "159:132",
+        0
+      ]
+    },
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "Positive + Reference"
+    }
+  },
+  "159:134": {
+    "inputs": {
+      "conditioning": [
+        "159:131",
+        0
+      ],
+      "latent": [
+        "159:132",
+        0
+      ]
+    },
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "Negative + Reference"
+    }
+  },
+  "159:135": {
+    "inputs": {
+      "image": [
+        "155:112",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Canvas Size"
+    }
+  },
+  "159:136": {
+    "inputs": {
+      "width": [
+        "159:135",
+        0
+      ],
+      "height": [
+        "159:135",
+        1
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptyFlux2LatentImage",
+    "_meta": {
+      "title": "Empty Latent"
+    }
+  },
+  "159:137": {
+    "inputs": {
+      "steps": 4,
+      "width": [
+        "159:135",
+        0
+      ],
+      "height": [
+        "159:135",
+        1
+      ]
+    },
+    "class_type": "Flux2Scheduler",
+    "_meta": {
+      "title": "Scheduler (4 steps)"
+    }
+  },
+  "159:138": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "Sampler (euler)"
+    }
+  },
+  "159:139": {
+    "inputs": {
+      "noise_seed": 5334185419188
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "Noise Seed (random per run)"
+    }
+  },
+  "159:140": {
+    "inputs": {
+      "cfg": 1,
+      "model": [
+        "20",
+        0
+      ],
+      "positive": [
+        "159:133",
+        0
+      ],
+      "negative": [
+        "159:134",
+        0
+      ]
+    },
+    "class_type": "CFGGuider",
+    "_meta": {
+      "title": "CFG Guider (cfg 1)"
+    }
+  },
+  "159:141": {
+    "inputs": {
+      "noise": [
+        "159:139",
+        0
+      ],
+      "guider": [
+        "159:140",
+        0
+      ],
+      "sampler": [
+        "159:138",
+        0
+      ],
+      "sigmas": [
+        "159:137",
+        0
+      ],
+      "latent_image": [
+        "159:136",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "Sample"
+    }
+  },
+  "159:142": {
+    "inputs": {
+      "samples": [
+        "159:141",
+        0
+      ],
+      "vae": [
+        "153:102",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decode"
+    }
+  },
+  "161:150": {
+    "inputs": {
+      "image": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Original Size"
+    }
+  },
+  "161:151": {
+    "inputs": {
+      "width": [
+        "161:150",
+        0
+      ],
+      "height": [
+        "161:150",
+        1
+      ],
+      "interpolation": "lanczos",
+      "method": "fill / crop",
+      "condition": "always",
+      "multiple_of": 1,
+      "image": [
+        "159:142",
+        0
+      ]
+    },
+    "class_type": "ImageResize+",
+    "_meta": {
+      "title": "Fill / Crop to Original Size"
+    }
+  }
+}

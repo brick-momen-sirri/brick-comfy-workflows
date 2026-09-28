@@ -1,0 +1,110 @@
+{
+  "comfyui": {
+    "repo": "https://github.com/Comfy-Org/ComfyUI",
+    "validated_with": "ComfyUI 0.12.3, frontend 1.38.13 (local); RunPod images run ComfyUI 0.20-0.24 with frontend 1.42-1.44",
+    "requires": "a ComfyUI build that includes the core Switch node (ComfySwitchNode, comfy_extras/nodes_logic.py, added December 2025) and the core Primitive nodes; subgraph support in the frontend (1.24 or newer)"
+  },
+  "custom_nodes": [
+    {
+      "name": "ComfyUI_essentials",
+      "repo": "https://github.com/cubiq/ComfyUI_essentials",
+      "ref": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+      "validated_version": "1.1.0 (commit 9d9f4be, same pin as the RunPod images)",
+      "used_by": ["general-enhancement", "pro-upscale", "flux2-klein-raw-enhancement"],
+      "nodes": ["ImageResize+", "GetImageSize+", "SimpleMath+", "ImageTile+", "ImageUntile+", "ImageFromBatch+", "ImageListToBatch+", "ImageBatchToList+", "MaskBlur+"],
+      "why": "Resizing with conditions, tile/untile grid for tiled processing, size maths (tile rows/cols, steps/denoise from creativity), batch/list conversion."
+    },
+    {
+      "name": "ComfyUI-Inpaint-CropAndStitch",
+      "repo": "https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch",
+      "ref": "8584b08d851762965df898b421a39075fc5357ae",
+      "validated_version": "3.0.17 (node interface verified; RunPod image installs main)",
+      "used_by": ["general-enhancement"],
+      "nodes": ["InpaintCropImproved", "InpaintStitchImproved"],
+      "why": "Crops the (masked) working area with context, pre-resizes it to 1280-5120 px and blends the enhanced crop back into the original."
+    },
+    {
+      "name": "ComfyUI-Impact-Pack",
+      "repo": "https://github.com/ltdrdata/ComfyUI-Impact-Pack",
+      "ref": "6a517ebe06fea2b74fc41b3bd089c0d7173eeced",
+      "validated_version": "8.28.2 (RunPod image: 8.28.3 from the registry)",
+      "used_by": ["general-enhancement"],
+      "nodes": ["FaceDetailerPipe", "ToDetailerPipe", "ToBasicPipe", "FromBasicPipe", "SAMLoader", "ImpactImageBatchToImageList"],
+      "why": "Body and face detailing (detect, segment, re-render) and batch-to-list conversion for per-tile processing."
+    },
+    {
+      "name": "ComfyUI-Impact-Subpack",
+      "repo": "https://github.com/ltdrdata/ComfyUI-Impact-Subpack",
+      "ref": "50c7b71a6a224734cc9b21963c6d1926816a97f1",
+      "validated_version": "1.3.5",
+      "used_by": ["general-enhancement"],
+      "nodes": ["UltralyticsDetectorProvider"],
+      "why": "Loads the YOLOv8 person/face detectors used by the detailers (needs the ultralytics Python package)."
+    },
+    {
+      "name": "ComfyUI-Custom-Scripts",
+      "repo": "https://github.com/pythongosssss/ComfyUI-Custom-Scripts",
+      "ref": "aac13aa7ce35b07d43633c3bbe654a38c00d74f5",
+      "validated_version": "1.2.5",
+      "used_by": ["general-enhancement"],
+      "nodes": ["StringFunction|pysssss"],
+      "why": "Builds the prompts (custom prompt + style tags, base prompt + per-tile caption) with the same tidy/append rules as the app."
+    },
+    {
+      "name": "ComfyUI-QwenVL",
+      "repo": "https://github.com/1038lab/ComfyUI-QwenVL",
+      "ref": "517aed64fae294ca1a906d38e7bcf43ee54afa21",
+      "validated_version": "2.0.0 local / 2.3.1 at the pinned commit (same inputs and custom-prompt behaviour); RunPod Klein image: 2.1.1",
+      "used_by": ["general-enhancement", "flux2-klein-raw-enhancement"],
+      "nodes": ["AILab_QwenVL_GGUF"],
+      "why": "Qwen3-VL captioning: per-tile captions in General Enhancement, the bvfinish prompt in RAW Enhancement.",
+      "extra": "Needs llama-cpp-python built with CUDA and vision (mtmd) support. The RunPod images use JamePeng/llama-cpp-python wheels (v0.3.30 cu128 basic, v0.3.49 cu128)."
+    },
+    {
+      "name": "ComfyUI-KJNodes",
+      "repo": "https://github.com/kijai/ComfyUI-KJNodes",
+      "ref": "20a283ee1c193a96a8c32301e27e9c3be3e762e9",
+      "validated_version": "1.2.8 (RunPod image installs main)",
+      "used_by": ["general-enhancement"],
+      "nodes": ["ImagePass", "ImageResizeKJv2"],
+      "why": "Pass-through helpers and the 512 px resize that feeds the tile captioner."
+    },
+    {
+      "name": "ComfyUI-post-processing-nodes",
+      "repo": "https://github.com/EllangoK/ComfyUI-post-processing-nodes",
+      "ref": "c96ce3bc9b4bfde0e8087df22575dbdca9792988",
+      "validated_version": "1.0.1 (RunPod image installs main)",
+      "used_by": ["general-enhancement"],
+      "nodes": ["Blend"],
+      "why": "The Sharpen control: blends each tile with its 1x-ReFocus version."
+    },
+    {
+      "name": "ComfyUI-Easy-Use",
+      "repo": "https://github.com/yolain/ComfyUI-Easy-Use",
+      "ref": "v1.3.4",
+      "validated_version": "1.3.4",
+      "used_by": ["general-enhancement"],
+      "nodes": ["easy imageListToImageBatch"],
+      "why": "Re-batches the enhanced tiles before untiling (kept as in the app so results stay identical)."
+    },
+    {
+      "name": "ComfyUI-nunchaku",
+      "repo": "https://github.com/nunchux-ai/ComfyUI-nunchaku",
+      "ref": "v1.2.1",
+      "validated_version": "1.2.1 (RunPod images); local 1.2.0 has the same loader inputs",
+      "used_by": ["general-enhancement", "pro-upscale"],
+      "nodes": ["NunchakuFluxDiTLoader"],
+      "why": "Loads the SVDQuant (4-bit) Fluxmania Legacy model used for the Flux passes.",
+      "extra": "Also install the matching nunchaku wheel from https://github.com/nunchux-ai/nunchaku/releases/tag/v1.2.1 (e.g. nunchaku-1.2.1+cu12.8torch2.10-cp312-cp312-linux_x86_64.whl for torch 2.10 / CUDA 12.8 / Python 3.12). The repositories were renamed from nunchaku-tech and nunchaku-ai; old URLs redirect."
+    },
+    {
+      "name": "ComfyUI-SeedVR2_VideoUpscaler",
+      "repo": "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler",
+      "ref": "4490bd1f482e026674543386bb2a4d176da245b9",
+      "validated_version": "2.5.24 (the saved workflow node was created with 2.5.14; inputs are unchanged)",
+      "used_by": ["pro-upscale"],
+      "nodes": ["SeedVR2LoadDiTModel", "SeedVR2LoadVAEModel", "SeedVR2VideoUpscaler"],
+      "why": "SeedVR2 7B restoration/upscale of each tile."
+    }
+  ]
+}
