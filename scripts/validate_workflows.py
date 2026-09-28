@@ -7,7 +7,7 @@ The script checks, per workflow:
   * widget values are inside their allowed range/options (missing model files are reported
     separately, since they depend on what is downloaded on that machine)
   * every combination of the "Toggle · …" switches: which stages run with lazy Switch
-    evaluation, and that each combination still reaches the SaveImage output
+    evaluation, and that each combination still reaches a saved image or video output
   * no absolute local paths or credential-looking strings are stored in the workflow
 
 It only reads /object_info; nothing is queued or executed.
@@ -29,7 +29,7 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-FILE_EXT = re.compile(r"\.(safetensors|pth|pt|ckpt|bin|gguf|onnx|sft|png|jpe?g|webp)$", re.I)
+FILE_EXT = re.compile(r"\.(safetensors|pth|pt|ckpt|bin|gguf|onnx|sft|png|jpe?g|webp|mp4|mov|mkv|webm|avi)$", re.I)
 SECRET = re.compile(r"(hf_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9_-]{20,}|Bearer\s+[A-Za-z0-9._-]{16,}|api[_-]?key\s*[:=])", re.I)
 ABS_PATH = re.compile(r"^(?:[A-Za-z]:[\\/]|\\\\|/(?:home|Users|root|mnt|runpod-volume|workspace)/)")
 PRIMITIVES = {"PrimitiveBoolean", "PrimitiveInt", "PrimitiveFloat", "PrimitiveString", "PrimitiveStringMultiline"}
@@ -46,11 +46,23 @@ def load_object_info(args) -> dict:
         return json.load(r)
 
 
-def input_spec(info: dict, name: str):
+def input_spec(info: dict, name: str, inputs: dict | None = None):
     for section in ("required", "optional"):
         spec = (info["input"].get(section) or {}).get(name)
         if spec is not None:
             return section, spec
+        # V3 autogrow inputs are serialized as values.a, values.b, etc.
+        for root, parent in (info["input"].get(section) or {}).items():
+            if parent[0] == "COMFY_AUTOGROW_V3" and name.startswith(root + "."):
+                template = parent[1]["template"]
+                if name[len(root) + 1:] in template.get("names", []):
+                    return section, next(iter(template["input"]["required"].values()))
+    # VHS exposes encoder-specific widgets under the selected format.
+    fmt = (info["input"].get("required") or {}).get("format")
+    if fmt and len(fmt) > 1 and isinstance(fmt[1], dict):
+        for widget in fmt[1].get("formats", {}).get((inputs or {}).get("format"), []):
+            if widget[0] == name:
+                return "optional", widget[1:]
     return None, None
 
 
@@ -95,11 +107,17 @@ class Checker:
             if info is None:
                 self.errors.append(f"{where}: node class not installed (missing custom node)")
                 continue
-            for name in (info["input"].get("required") or {}):
+            for name, spec in (info["input"].get("required") or {}).items():
+                if spec[0] == "COMFY_AUTOGROW_V3":
+                    template = spec[1]["template"]
+                    count = sum(f"{name}.{child}" in node["inputs"] for child in template.get("names", []))
+                    if count < template.get("min", 1):
+                        self.errors.append(f"{where}: required autogrow input '{name}' missing")
+                    continue
                 if name not in node["inputs"]:
                     self.errors.append(f"{where}: required input '{name}' missing")
             for name, val in node["inputs"].items():
-                section, spec = input_spec(info, name)
+                section, spec = input_spec(info, name, node["inputs"])
                 if spec is None:
                     self.warnings.append(f"{where}: input '{name}' not defined by the installed node version")
                     continue
@@ -120,6 +138,8 @@ class Checker:
                         self.errors.append(f"{where}.{name}: absolute path {val!r}")
 
     def check_value(self, where, name, val, want, opts) -> None:
+        if want == "COMBO":
+            want = opts.get("options", [])
         if isinstance(want, list):
             if val not in want:
                 if isinstance(val, str) and FILE_EXT.search(val):
@@ -140,6 +160,14 @@ class Checker:
             self.errors.append(f"{where}.{name}: expected text, got {val!r}")
 
     # ---------------------------------------------------------------- toggles
+    def has_saved_output(self, ran: set) -> bool:
+        return any(
+            self.api[n]["class_type"] == "SaveImage"
+            or (self.api[n]["class_type"] == "VHS_VideoCombine"
+                and self.api[n]["inputs"].get("save_output") is True)
+            for n in ran
+        )
+
     def toggles(self) -> list[str]:
         return sorted((nid for nid, n in self.api.items()
                        if n["class_type"] == "PrimitiveBoolean" and (n.get("_meta") or {}).get("title", "").lower().startswith("toggle")),
@@ -226,7 +254,7 @@ def main() -> int:
         for combo in itertools.product((True, False), repeat=len(toggles)):
             values = dict(zip(toggles, combo))
             ran, notes = c.executed(values)
-            save_ok = any(api[n]["class_type"] == "SaveImage" for n in ran)
+            save_ok = c.has_saved_output(ran)
             per_stage = {}
             for n in api:
                 sg = n.split(":")[0] if ":" in n else None
@@ -237,7 +265,8 @@ def main() -> int:
             label = ", ".join(f"{titles[t].split('·', 1)[-1].strip()}={'on' if v else 'off'}" for t, v in values.items())
             status = "ok " if save_ok else "NO OUTPUT"
             failed |= not save_ok
-            print(f"    [{status}] {label}\n             runs {len(ran)} nodes; stage nodes run: {', '.join(ran_stages) or '(none: input passes through)'}")
+            stage_label = ', '.join(ran_stages) or ('(none: input passes through)' if stages else '(flat graph)')
+            print(f"    [{status}] {label or 'single execution path'}\n             runs {len(ran)} nodes; stage nodes run: {stage_label}")
             for n in notes:
                 print(f"             note: {n}")
         failed |= bool(c.errors)

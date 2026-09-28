@@ -10,7 +10,7 @@
       "repo": "https://github.com/cubiq/ComfyUI_essentials",
       "ref": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
       "validated_version": "1.1.0 (commit 9d9f4be, same pin as the RunPod images)",
-      "used_by": ["general-enhancement", "pro-upscale", "flux2-klein-raw-enhancement"],
+      "used_by": ["general-enhancement", "pro-upscale", "flux2-klein-raw-enhancement", "ltx25-video-upscale"],
       "nodes": ["ImageResize+", "GetImageSize+", "SimpleMath+", "ImageTile+", "ImageUntile+", "ImageFromBatch+", "ImageListToBatch+", "ImageBatchToList+", "MaskBlur+"],
       "why": "Resizing with conditions, tile/untile grid for tiled processing, size maths (tile rows/cols, steps/denoise from creativity), batch/list conversion."
     },
@@ -55,9 +55,9 @@
       "repo": "https://github.com/1038lab/ComfyUI-QwenVL",
       "ref": "517aed64fae294ca1a906d38e7bcf43ee54afa21",
       "validated_version": "2.0.0 local / 2.3.1 at the pinned commit (same inputs and custom-prompt behaviour); RunPod Klein image: 2.1.1",
-      "used_by": ["general-enhancement", "flux2-klein-raw-enhancement"],
+      "used_by": ["general-enhancement", "flux2-klein-raw-enhancement", "ltx25-video-upscale"],
       "nodes": ["AILab_QwenVL_GGUF"],
-      "why": "Qwen3-VL captioning: per-tile captions in General Enhancement, the bvfinish prompt in RAW Enhancement.",
+      "why": "Qwen3-VL captioning: per-tile captions in General Enhancement, the bvfinish prompt in RAW Enhancement. First-frame caption in LTX 2.5.",
       "extra": "Needs llama-cpp-python built with CUDA and vision (mtmd) support. The RunPod images use JamePeng/llama-cpp-python wheels (v0.3.30 cu128 basic, v0.3.49 cu128)."
     },
     {
@@ -65,9 +65,9 @@
       "repo": "https://github.com/kijai/ComfyUI-KJNodes",
       "ref": "20a283ee1c193a96a8c32301e27e9c3be3e762e9",
       "validated_version": "1.2.8 (RunPod image installs main)",
-      "used_by": ["general-enhancement"],
-      "nodes": ["ImagePass", "ImageResizeKJv2"],
-      "why": "Pass-through helpers and the 512 px resize that feeds the tile captioner."
+      "used_by": ["general-enhancement", "ltx25-video-upscale"],
+      "nodes": ["ImagePass", "ImageResizeKJv2", "GetImageRangeFromBatch", "GetImageSizeAndCount", "ImageBatchMulti", "ImageBatchRepeatInterleaving"],
+      "why": "Pass-through helpers and the 512 px resize that feeds the tile captioner. Also counts, selects, repeats and concatenates video frames in LTX 2.5. These interfaces are present at the existing pin."
     },
     {
       "name": "ComfyUI-post-processing-nodes",
@@ -105,6 +105,26 @@
       "used_by": ["pro-upscale"],
       "nodes": ["SeedVR2LoadDiTModel", "SeedVR2LoadVAEModel", "SeedVR2VideoUpscaler"],
       "why": "SeedVR2 7B restoration/upscale of each tile."
+    },
+    {
+      "name": "ComfyUI-VideoHelperSuite",
+      "repo": "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite",
+      "ref": "993082e4f2473bf4acaf06f51e33877a7eb38960",
+      "validated_version": "1.7.9; source and live node interfaces inspected",
+      "used_by": ["ltx25-video-upscale"],
+      "nodes": ["VHS_LoadVideo", "VHS_VideoCombine"],
+      "why": "Loads video frames and source audio; saves H.264 MP4 with audio.",
+      "extra": "Needs FFmpeg (libx264/AAC); requirements include imageio-ffmpeg and opencv-python."
+    },
+    {
+      "name": "ComfyUI-LTXVideo",
+      "repo": "https://github.com/Lightricks/ComfyUI-LTXVideo",
+      "ref": "ac4d99839020b983e956a8ab67ec38aec1b6e65a",
+      "validated_version": "Pinned sampler source inspected; full LTX 2.5 inference not executed",
+      "used_by": ["ltx25-video-upscale"],
+      "nodes": ["LTXVLoopingSampler"],
+      "why": "Refines upscaled video latents in overlapping temporal windows.",
+      "extra": "Requires recent ComfyUI with LTX 2.5 support; reviewed against ComfyUI 0.37.0. This graph uses the core model, encoder and VAE loaders."
     }
   ]
 }

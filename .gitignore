@@ -20,6 +20,13 @@ temp/
 *.exr
 *.tif
 *.tiff
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.avi
+*.wav
+*.mp3
 
 # local environment / secrets
 .env

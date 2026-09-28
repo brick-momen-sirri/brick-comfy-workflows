@@ -5,7 +5,7 @@
   python scripts/download_models.py --comfyui ./ComfyUI --workflow pro-upscale  # one workflow
   python scripts/download_models.py --comfyui ./ComfyUI --dry-run               # show the plan only
 
-Gated Hugging Face files (FLUX.1-schnell VAE, FLUX.2 klein 9B) need you to accept the model
+Gated Hugging Face files (FLUX.1-schnell VAE, FLUX.2 klein 9B, LTX 2.5) need you to accept the model
 terms on huggingface.co and export HF_TOKEN=<your read token>. Internal models have no public
 URL and are listed at the end so you can copy them manually.
 

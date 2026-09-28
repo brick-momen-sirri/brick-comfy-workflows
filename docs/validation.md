@@ -1,6 +1,6 @@
 # Validation report
 
-Date: 2026-09-28. Status: **R&D**. The workflows are structurally validated, and one of them was executed end to end. They have not yet been run end to end on production hardware.
+Date: 2026-09-28. Status: **R&D**. The original image workflows are structurally validated, and one of them was executed end to end. They have not yet been run end to end on production hardware. The newly added video workflow has a separate record below; the original environment and image-runtime results remain historical.
 
 ## Test environment
 
@@ -83,3 +83,37 @@ python scripts/validate_workflows.py --url http://127.0.0.1:8188 [--strict-model
 ```
 
 The parity checker reads the internal app source and its original API workflows, so it is not part of this repository.
+
+## LTX 2.5 video workflow
+
+The supplied graph was inspected node by node and published as `ltx25_video_upscale.json` (32 editor nodes, including three reroutes and one setup note) and `ltx25_video_upscale.api.json` (28 processing nodes). It is a standalone adaptation, outside the Momi Forge parity comparison.
+
+**Environment:** ComfyUI 0.37.0, frontend 1.53.6, Python 3.12.10, torch 2.8.0+cu128, Windows / RTX 4090. This is newer than the original image-workflow test environment above.
+
+| Check | Result |
+|---|---|
+| Live `/object_info`: classes, required inputs, link types and widget values | 0 structural errors; all 28 processing nodes reach the saved video path |
+| Editor load and API export | 0 unknown node types, 0 broken links; four loader warnings correspond to missing models. Same 28 processing nodes, input values and resolved links. API omits the frontend-only `Update inputs: null` button value emitted by KJNodes; one default display title differs. |
+| Missing-file reporting | Four selected models unavailable: LTX 2.5 distilled INT8 transformer, Gemma 4 INT8 encoder, LTX 2.5 x2 latent upscaler, CQ Enhancer V2 LoRA. `input.mp4` is also a placeholder. |
+| Frame-padding edge cases | Checked every input count from 1 to 4096: append 1–8 repeats, obtain `8n+1`, trim back without dropping source frames |
+| Default timing/audio route | Input, conditioning and export agree at 24 fps; source audio connects to the video output; no initial frame skip |
+| Installer/downloader workflow filters | Dry runs select 5 custom-node packs and 7 model files, with correct folders and gated-access flags |
+| Model source verification | Exact files and sizes confirmed through the publishers' Hugging Face file listings; weights were not downloaded for this inspection |
+| All four repository workflows, current static checker | Passed: 23 paths (16 General + 4 Pro + 2 Klein + 1 video), no structural errors; missing files remain warnings unless `--strict-models` is used |
+| Offline regression tests | 6 tests pass: padding/trimming, timing/audio wiring, saved-video output detection, dynamic math inputs, V3 model combos and video encoder options |
+| Full LTX 2.5 GPU render | **Not executed**: required models are missing; visual quality, audio sync, memory use and runtime model/sampler compatibility remain unverified |
+
+The running installation wraps several nodes with Workflow Encrypt, so `/object_info` alone is not sufficient to identify their original packs. Their upstream implementation sources were also inspected: the existing KJNodes pin contains the required frame helpers; VideoHelperSuite supplies video IO, and Lightricks' LTXVideo supplies the looping sampler. The published dependency list points to those actual packs. This was not a clean installation of all pinned packs, and no runtime claim is made for the full graph.
+
+The static validator now understands ComfyUI V3 combo options and named autogrow math inputs, VideoHelperSuite's format-specific widgets, missing video filenames, and saved video outputs. It still only reads node schemas and follows graph links; it does not queue a render or prove that model weights will load.
+
+The [video guide](ltx25-video-upscale.md#changes-from-the-pasted-workflow) records the input/default changes and corrected padding expression. It also documents the difference between the supplied DiffVAE and CQdesign's Conv VAE recommendation.
+
+```bash
+python -m unittest discover -s tests -v
+python scripts/validate_workflows.py --url http://localhost:8150 workflows/ltx25-video-upscale/ltx25_video_upscale.api.json
+# After installing all models and uploading your input:
+python scripts/validate_workflows.py --url http://localhost:8150 --strict-models workflows/ltx25-video-upscale/ltx25_video_upscale.api.json
+```
+
+For an actual media test, first replace the placeholder filename, cap the input at 49 or 97 frames and check the saved dimensions, frame count and audio sync. Then test a clip crossing temporal-window boundaries and compare against the original. No sample client media is included in this repository.

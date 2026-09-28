@@ -1,6 +1,6 @@
 # Workflow details
 
-Stage-by-stage description of each graph, and how it corresponds to the internal Momi Forge (Gradio) app. The app sends ComfyUI API workflows to RunPod serverless workers. It changes a few values and links per request, depending on the options the user picks. These editor workflows express the same routing with lazy **Switch** nodes, so the same graph works for every option.
+Stage-by-stage description of the three image graphs, and how each corresponds to the internal Momi Forge (Gradio) app. The app sends ComfyUI API workflows to RunPod serverless workers. It changes a few values and links per request, depending on the options the user picks. These editor workflows express the same routing with lazy **Switch** nodes, so the same graph works for every option.
 
 ## General Enhancement
 
@@ -65,9 +65,13 @@ The Flux models (Fluxmania, CLIP-L + T5, FLUX VAE) sit in one **Flux Models** su
    - Sampling: euler, Flux2 scheduler, 4 steps, cfg 1, on an empty latent of the canvas size.
 6. **Restore Original Size** (subgraph): fill/crop back to the exact input size, then `Save Result`.
 
+## LTX 2.5 Video Upscale
+
+The fourth workflow is a standalone video experiment. See [its complete guide](ltx25-video-upscale.md) for the processing stages, models, node packs, source-graph corrections and runtime limitations. It is not included in the image workflows’ Momi Forge parity comparison.
+
 ## Differences from the Momi Forge app
 
-These differences are intentional. Everything else matches: same nodes, links and values for every option combination (see [validation.md](validation.md)).
+For the three image workflows, these differences are intentional. Everything else matches: same nodes, links and values for every option combination (see [validation.md](validation.md)).
 
 | Area | App | This repository | Effect on results |
 |---|---|---|---|

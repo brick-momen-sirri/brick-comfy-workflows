@@ -2,7 +2,7 @@
 
 Use the `*.api.json` files for `POST /prompt` or a serverless worker. They are the flattened form of the editor workflows, so nodes inside a subgraph have IDs like `219:138`: `<subgraph node id>:<inner node id>`. These IDs are stable as long as the editor workflow is not restructured.
 
-In every workflow:
+In the three image workflows:
 
 - **input image**: node `1` (`LoadImage`), `inputs.image` = the uploaded file name
 - **output**: the `Save Result` node (`SaveImage`)
@@ -53,6 +53,41 @@ In every workflow:
 
 - **Randomised per run in the app:** `159:139.noise_seed`.
 - **Fixed:** the Qwen3-VL caption seed `157:121.seed`.
+
+## LTX 2.5 Video Upscale: `workflows/ltx25-video-upscale/ltx25_video_upscale.api.json`
+
+This workflow uses plain node IDs and has no toggles. Place the video in ComfyUI's `input/` folder or upload it with the VHS upload control. Set node `29`'s `video` to that relative filename.
+
+| Node | Input | Meaning | Default |
+|---|---|---|---|
+| `29` | `video` | Input video filename | `input.mp4` |
+| `29` | `force_rate` | Resample input to this fps | `24` |
+| `29` | `skip_first_frames` | Frames skipped at the start | `0` |
+| `29` | `frame_load_cap` | Maximum loaded frames; 0 = all | `0` |
+| `29` | `select_every_nth` | Frame stride; keep 1 for default audio timing | `1` |
+| `5` | `strength_model` | CQ Enhancer V2 strength | `1.0` |
+| `14` | `noise_seed` | Diffusion seed | `42` |
+| `15` | `steps`, `denoise` | Refinement schedule | `4`, `0.15` |
+| `33` | `video_cfg`, `audio_cfg` | Guidance scales | `1`, `1` |
+| `71` | `temporal_tile_size`, `temporal_overlap` | Sampling windows, in frames | `144`, `48` |
+| `10` | `frame_rate` | Conditioning fps; align with input/output | `24` |
+| `74` | `custom_prompt`, `seed` | First-frame caption instruction/seed | empty, `179095357` |
+| `7` | `text` | Caption link; replace with text for a manual prompt | `["74", 0]` |
+| `40` | `frame_rate` | Export fps; align with input/conditioning | `24` |
+| `40` | `filename_prefix` | Saved MP4 prefix | `BrickVisual/LTX25_Upscale` |
+| `40` | `crf` | H.264 quality setting | `23` |
+| `40` | `save_output` | Save under output/ | `true` |
+
+```python
+wf = json.load(open("workflows/ltx25-video-upscale/ltx25_video_upscale.api.json", encoding="utf-8"))
+wf["29"]["inputs"]["video"] = "my_clip.mp4"
+wf["29"]["inputs"]["frame_load_cap"] = 49  # short initial memory test
+# Then submit wf as the prompt using the request example below.
+```
+
+The loader, conditioning and encoder rates must agree; changing the export rate alone alters speed/audio sync. `frame_load_cap` counts the loaded, resampled frames. The editor randomizes the Qwen caption seed after generation; API clients must update `74.seed` explicitly if they want that behavior. The diffusion seed remains fixed unless changed.
+
+Results are emitted by `VHS_VideoCombine` at node `40` (video metadata, commonly under `gifs` in ComfyUI history), rather than `SaveImage`. A serverless handler must upload video files and collect video outputs explicitly; the image-only RunPod payload below does not implement this. See the [video guide](ltx25-video-upscale.md) before running.
 
 ## Example: ComfyUI `/prompt`
 

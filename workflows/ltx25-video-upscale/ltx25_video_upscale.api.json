@@ -1,0 +1,459 @@
+{
+  "12": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "euler_ancestral"
+    },
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "14": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 42
+    },
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "16": {
+    "class_type": "LTXVLatentUpsampler",
+    "inputs": {
+      "samples": [
+        "3",
+        0
+      ],
+      "upscale_model": [
+        "21",
+        0
+      ],
+      "vae": [
+        "9",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Upscale latents x2"
+    }
+  },
+  "33": {
+    "class_type": "LTXVDualCFGGuider",
+    "inputs": {
+      "video_cfg": 1,
+      "audio_cfg": 1,
+      "model": [
+        "5",
+        0
+      ],
+      "positive": [
+        "10",
+        0
+      ],
+      "negative": [
+        "10",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "LTXVDualCFGGuider"
+    }
+  },
+  "10": {
+    "class_type": "LTXVConditioning",
+    "inputs": {
+      "frame_rate": 24,
+      "positive": [
+        "7",
+        0
+      ],
+      "negative": [
+        "8",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "LTXVConditioning"
+    }
+  },
+  "17": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+      "type": "ltxv",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "Gemma 4 text encoder"
+    }
+  },
+  "8": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "bad anatomy, inconsistent look, low resolution,",
+      "clip": [
+        "17",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Negative prompt"
+    }
+  },
+  "70": {
+    "class_type": "GetImageRangeFromBatch",
+    "inputs": {
+      "start_index": 0,
+      "num_frames": [
+        "29",
+        1
+      ],
+      "images": [
+        "26",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Remove padding frames"
+    }
+  },
+  "30": {
+    "class_type": "GetImageRangeFromBatch",
+    "inputs": {
+      "start_index": 0,
+      "num_frames": 1,
+      "images": [
+        "29",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "First frame for conditioning"
+    }
+  },
+  "64": {
+    "class_type": "GetImageRangeFromBatch",
+    "inputs": {
+      "start_index": -1,
+      "num_frames": 1,
+      "images": [
+        "29",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Last input frame"
+    }
+  },
+  "71": {
+    "class_type": "LTXVLoopingSampler",
+    "inputs": {
+      "temporal_tile_size": 144,
+      "temporal_overlap": 48,
+      "guiding_strength": 1,
+      "temporal_overlap_cond_strength": 0.5,
+      "cond_image_strength": 1,
+      "horizontal_tiles": 1,
+      "vertical_tiles": 1,
+      "spatial_overlap": 1,
+      "adain_factor": 0,
+      "guiding_start_step": 0,
+      "guiding_end_step": 1000,
+      "optional_cond_image_indices": "0",
+      "model": [
+        "5",
+        0
+      ],
+      "vae": [
+        "9",
+        0
+      ],
+      "noise": [
+        "14",
+        0
+      ],
+      "sampler": [
+        "12",
+        0
+      ],
+      "sigmas": [
+        "15",
+        0
+      ],
+      "guider": [
+        "33",
+        0
+      ],
+      "latents": [
+        "20",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Refine video in temporal windows"
+    }
+  },
+  "15": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 4,
+      "denoise": 0.15,
+      "model": [
+        "5",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "65": {
+    "class_type": "ImageBatchRepeatInterleaving",
+    "inputs": {
+      "repeats": [
+        "63",
+        1
+      ],
+      "images": [
+        "64",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Repeat last frame"
+    }
+  },
+  "66": {
+    "class_type": "ImageBatchMulti",
+    "inputs": {
+      "inputcount": 2,
+      "image_1": [
+        "29",
+        0
+      ],
+      "image_2": [
+        "65",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Append padding frames"
+    }
+  },
+  "21": {
+    "class_type": "LatentUpscaleModelLoader",
+    "inputs": {
+      "model_name": "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+    },
+    "_meta": {
+      "title": "LTX 2.5 spatial upscaler x2"
+    }
+  },
+  "20": {
+    "class_type": "LTXVImgToVideoInplace",
+    "inputs": {
+      "strength": 1,
+      "bypass": false,
+      "vae": [
+        "9",
+        0
+      ],
+      "image": [
+        "30",
+        0
+      ],
+      "latent": [
+        "16",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Anchor first frame"
+    }
+  },
+  "6": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "LTX 2.5 distilled INT8"
+    }
+  },
+  "26": {
+    "class_type": "VAEDecodeTiled",
+    "inputs": {
+      "tile_size": 512,
+      "overlap": 64,
+      "temporal_size": 144,
+      "temporal_overlap": 48,
+      "samples": [
+        "71",
+        0
+      ],
+      "vae": [
+        "9",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Decode video (tiled)"
+    }
+  },
+  "75": {
+    "class_type": "ImageFromBatch+",
+    "inputs": {
+      "start": 0,
+      "length": 1,
+      "image": [
+        "29",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "First frame for caption"
+    }
+  },
+  "74": {
+    "class_type": "AILab_QwenVL_GGUF",
+    "inputs": {
+      "model_name": "Qwen3VL-4B-Instruct-Q8_0.gguf",
+      "preset_prompt": "📹 Video Summary",
+      "custom_prompt": "",
+      "max_tokens": 512,
+      "keep_model_loaded": false,
+      "seed": 179095357,
+      "image": [
+        "75",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Caption first frame (Qwen3-VL)"
+    }
+  },
+  "9": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "ltx-2.5-video-vae-bf16.safetensors"
+    },
+    "_meta": {
+      "title": "LTX 2.5 video VAE"
+    }
+  },
+  "53": {
+    "class_type": "GetImageSizeAndCount",
+    "inputs": {
+      "image": [
+        "29",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Input dimensions and frame count"
+    }
+  },
+  "7": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": [
+        "74",
+        0
+      ],
+      "clip": [
+        "17",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Positive prompt from caption"
+    }
+  },
+  "3": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "66",
+        0
+      ],
+      "vae": [
+        "9",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Encode video"
+    }
+  },
+  "63": {
+    "class_type": "ComfyMathExpression",
+    "inputs": {
+      "expression": "((8 - a) % 8) + 1",
+      "values.a": [
+        "53",
+        3
+      ]
+    },
+    "_meta": {
+      "title": "Pad to 8n+1 frames"
+    }
+  },
+  "40": {
+    "class_type": "VHS_VideoCombine",
+    "inputs": {
+      "frame_rate": 24,
+      "loop_count": 0,
+      "filename_prefix": "BrickVisual/LTX25_Upscale",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 23,
+      "save_metadata": false,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "70",
+        0
+      ],
+      "audio": [
+        "29",
+        2
+      ]
+    },
+    "_meta": {
+      "title": "Save Video (24 fps)"
+    }
+  },
+  "29": {
+    "class_type": "VHS_LoadVideo",
+    "inputs": {
+      "video": "input.mp4",
+      "force_rate": 24,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "_meta": {
+      "title": "Input Video (24 fps)"
+    }
+  },
+  "5": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "lora_name": "ltx2.5-CQ-enhancer-lora-V2.safetensors",
+      "strength_model": 1,
+      "model": [
+        "6",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "CQ Enhancer V2 LoRA"
+    }
+  }
+}

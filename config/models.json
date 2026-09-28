@@ -113,7 +113,7 @@
       "file": "Qwen3VL-4B-Instruct-Q8_0.gguf",
       "folder": "llm/GGUF/Qwen/Qwen3-VL-4B-Instruct-GGUF",
       "type": "Vision-language model (Qwen3-VL 4B Instruct, GGUF Q8_0)",
-      "used_by": ["general-enhancement", "flux2-klein-raw-enhancement"],
+      "used_by": ["general-enhancement", "flux2-klein-raw-enhancement", "ltx25-video-upscale"],
       "download_url": "https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct-GGUF/resolve/main/Qwen3VL-4B-Instruct-Q8_0.gguf",
       "hf_repo": "Qwen/Qwen3-VL-4B-Instruct-GGUF",
       "size_mib": 4082,
@@ -125,7 +125,7 @@
       "file": "mmproj-Qwen3VL-4B-Instruct-F16.gguf",
       "folder": "llm/GGUF/Qwen/Qwen3-VL-4B-Instruct-GGUF",
       "type": "Vision projector for Qwen3-VL 4B (GGUF F16)",
-      "used_by": ["general-enhancement", "flux2-klein-raw-enhancement"],
+      "used_by": ["general-enhancement", "flux2-klein-raw-enhancement", "ltx25-video-upscale"],
       "download_url": "https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct-GGUF/resolve/main/mmproj-Qwen3VL-4B-Instruct-F16.gguf",
       "hf_repo": "Qwen/Qwen3-VL-4B-Instruct-GGUF",
       "size_mib": 797,
@@ -257,6 +257,63 @@
       "auth": "public",
       "license": "Apache-2.0 (repository card)",
       "notes": "Trigger token: bvfinish. Recommended strength: 1.0. Place it directly in models/loras/ (no subfolder)."
+    },
+    {
+      "file": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+      "folder": "diffusion_models",
+      "type": "LTX 2.5 distilled transformer (Comfy INT8 ConvRot)",
+      "used_by": ["ltx25-video-upscale"],
+      "download_url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/diffusion_models/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+      "hf_repo": "Lightricks/LTX-2.5",
+      "size_mib": 20507.8,
+      "auth": "gated: accept the LTX-2.5 repository terms and set HF_TOKEN",
+      "license": "LTX-2 Community License Agreement; see publisher terms"
+    },
+    {
+      "file": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+      "folder": "text_encoders",
+      "type": "Gemma 4 text encoder with LTX 2.5 projection (Comfy INT8 ConvRot)",
+      "used_by": ["ltx25-video-upscale"],
+      "download_url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+      "hf_repo": "Lightricks/LTX-2.5",
+      "size_mib": 14660.8,
+      "auth": "gated: accept the LTX-2.5 repository terms and set HF_TOKEN",
+      "license": "LTX-2 Community License Agreement; see publisher terms"
+    },
+    {
+      "file": "ltx-2.5-video-vae-bf16.safetensors",
+      "folder": "vae",
+      "type": "LTX 2.5 video VAE (DiffVAE, BF16)",
+      "used_by": ["ltx25-video-upscale"],
+      "download_url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/vae/ltx-2.5-video-vae-bf16.safetensors",
+      "hf_repo": "Lightricks/LTX-2.5",
+      "size_mib": 1404.0,
+      "auth": "gated: accept the LTX-2.5 repository terms and set HF_TOKEN",
+      "license": "LTX-2 Community License Agreement; see publisher terms",
+      "notes": "Retained from the supplied workflow. CQdesign recommends ltx-2.5-video-vae-conv-bf16.safetensors for its own enhancer workflow; that alternative has not been validated here."
+    },
+    {
+      "file": "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+      "folder": "latent_upscale_models",
+      "type": "LTX 2.5 spatial latent upscaler x2 (BF16)",
+      "used_by": ["ltx25-video-upscale"],
+      "download_url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+      "hf_repo": "Lightricks/LTX-2.5",
+      "size_mib": 949.6,
+      "auth": "gated: accept the LTX-2.5 repository terms and set HF_TOKEN",
+      "license": "LTX-2 Community License Agreement; see publisher terms"
+    },
+    {
+      "file": "ltx2.5-CQ-enhancer-lora-V2.safetensors",
+      "folder": "loras",
+      "type": "LoRA (LTX 2.5, CQ Enhancer V2)",
+      "used_by": ["ltx25-video-upscale"],
+      "download_url": "https://huggingface.co/CQdesign/LTX-2.5-CQ-Video-and-Image-Enhancer-LoRAs/resolve/main/ltx2.5-CQ-enhancer-lora-V2.safetensors",
+      "hf_repo": "CQdesign/LTX-2.5-CQ-Video-and-Image-Enhancer-LoRAs",
+      "size_mib": 1278.5,
+      "auth": "public",
+      "license": "Not stated by the publisher",
+      "notes": "Strength 1.0 in this workflow. No trigger required by publisher. This graph is an adaptation, not the publisher V2 reference workflow."
     }
   ]
 }

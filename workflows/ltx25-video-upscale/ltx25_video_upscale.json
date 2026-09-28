@@ -1,0 +1,1976 @@
+{
+  "id": "8c12af41-5b87-45ec-8db5-c7f85cdb72a1",
+  "revision": 0,
+  "last_node_id": 80,
+  "last_link_id": 114,
+  "nodes": [
+    {
+      "id": 12,
+      "type": "KSamplerSelect",
+      "pos": [
+        4920,
+        210
+      ],
+      "size": [
+        270,
+        110
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "SAMPLER",
+          "type": "SAMPLER",
+          "links": [
+            89
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSamplerSelect",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.75"
+      },
+      "widgets_values": [
+        "euler_ancestral"
+      ]
+    },
+    {
+      "id": 14,
+      "type": "RandomNoise",
+      "pos": [
+        4920,
+        -180
+      ],
+      "size": [
+        270,
+        110
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "NOISE",
+          "type": "NOISE",
+          "links": [
+            91
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "RandomNoise",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.75"
+      },
+      "widgets_values": [
+        42,
+        "fixed"
+      ]
+    },
+    {
+      "id": 16,
+      "type": "LTXVLatentUpsampler",
+      "pos": [
+        4360,
+        660
+      ],
+      "size": [
+        330,
+        120
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 113
+        },
+        {
+          "name": "upscale_model",
+          "type": "LATENT_UPSCALE_MODEL",
+          "link": 13
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            18
+          ]
+        }
+      ],
+      "title": "Upscale latents x2",
+      "properties": {
+        "Node name for S&R": "LTXVLatentUpsampler",
+        "cnr_id": "comfy-core",
+        "ver": "0.14.1"
+      }
+    },
+    {
+      "id": 33,
+      "type": "LTXVDualCFGGuider",
+      "pos": [
+        4930,
+        -10
+      ],
+      "size": [
+        270,
+        160
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 97
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 49
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 50
+        }
+      ],
+      "outputs": [
+        {
+          "name": "GUIDER",
+          "type": "GUIDER",
+          "links": [
+            88
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LTXVDualCFGGuider",
+        "cnr_id": "comfy-core",
+        "ver": "0.28.0"
+      },
+      "widgets_values": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": 10,
+      "type": "LTXVConditioning",
+      "pos": [
+        4450,
+        460
+      ],
+      "size": [
+        280,
+        130
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            49
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            50
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LTXVConditioning",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.56"
+      },
+      "widgets_values": [
+        24
+      ]
+    },
+    {
+      "id": 17,
+      "type": "CLIPLoader",
+      "pos": [
+        4360,
+        820
+      ],
+      "size": [
+        400,
+        138
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            5,
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.29.0",
+        "models": [
+          {
+            "name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+            "url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+            "directory": "text_encoders"
+          }
+        ]
+      },
+      "widgets_values": [
+        "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "ltxv",
+        "default"
+      ],
+      "title": "Gemma 4 text encoder"
+    },
+    {
+      "id": 8,
+      "type": "CLIPTextEncode",
+      "pos": [
+        4340,
+        150
+      ],
+      "size": [
+        560,
+        250
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 6
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.56"
+      },
+      "widgets_values": [
+        "bad anatomy, inconsistent look, low resolution,"
+      ],
+      "color": "#322",
+      "bgcolor": "#533",
+      "title": "Negative prompt"
+    },
+    {
+      "id": 70,
+      "type": "GetImageRangeFromBatch",
+      "pos": [
+        5680,
+        -100
+      ],
+      "size": [
+        350,
+        134
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 83
+        },
+        {
+          "name": "masks",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "num_frames",
+          "type": "INT",
+          "widget": {
+            "name": "num_frames"
+          },
+          "link": 86
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            85
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GetImageRangeFromBatch",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ver": "20a283ee1c193a96a8c32301e27e9c3be3e762e9",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "widgets_values": [
+        0,
+        1
+      ],
+      "title": "Remove padding frames"
+    },
+    {
+      "id": 30,
+      "type": "GetImageRangeFromBatch",
+      "pos": [
+        2650,
+        -190
+      ],
+      "size": [
+        350,
+        134
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 29
+        },
+        {
+          "name": "masks",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            99
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GetImageRangeFromBatch",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ver": "20a283ee1c193a96a8c32301e27e9c3be3e762e9",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "widgets_values": [
+        0,
+        1
+      ],
+      "title": "First frame for conditioning"
+    },
+    {
+      "id": 64,
+      "type": "GetImageRangeFromBatch",
+      "pos": [
+        2650,
+        -360
+      ],
+      "size": [
+        350,
+        134
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 72
+        },
+        {
+          "name": "masks",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            73
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GetImageRangeFromBatch",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ver": "20a283ee1c193a96a8c32301e27e9c3be3e762e9",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "widgets_values": [
+        -1,
+        1
+      ],
+      "title": "Last input frame"
+    },
+    {
+      "id": 71,
+      "type": "LTXVLoopingSampler",
+      "pos": [
+        5290,
+        100
+      ],
+      "size": [
+        380,
+        622
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 93
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 94
+        },
+        {
+          "name": "noise",
+          "type": "NOISE",
+          "link": 91
+        },
+        {
+          "name": "sampler",
+          "type": "SAMPLER",
+          "link": 89
+        },
+        {
+          "name": "sigmas",
+          "type": "SIGMAS",
+          "link": 87
+        },
+        {
+          "name": "guider",
+          "type": "GUIDER",
+          "link": 88
+        },
+        {
+          "name": "latents",
+          "type": "LATENT",
+          "link": 95
+        },
+        {
+          "name": "optional_cond_images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "optional_guiding_latents",
+          "shape": 7,
+          "type": "LATENT",
+          "link": null
+        },
+        {
+          "name": "optional_positive_conditionings",
+          "shape": 7,
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "optional_negative_index_latents",
+          "shape": 7,
+          "type": "LATENT",
+          "link": null
+        },
+        {
+          "name": "optional_normalizing_latents",
+          "shape": 7,
+          "type": "LATENT",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "denoised_output",
+          "type": "LATENT",
+          "links": [
+            98
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LTXVLoopingSampler",
+        "ver": "ac4d99839020b983e956a8ab67ec38aec1b6e65a",
+        "aux_id": "Lightricks/ComfyUI-LTXVideo"
+      },
+      "widgets_values": [
+        144,
+        48,
+        1,
+        0.5,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1000,
+        "0"
+      ],
+      "title": "Refine video in temporal windows"
+    },
+    {
+      "id": 15,
+      "type": "BasicScheduler",
+      "pos": [
+        4920,
+        380
+      ],
+      "size": [
+        270,
+        142
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 96
+        }
+      ],
+      "outputs": [
+        {
+          "name": "SIGMAS",
+          "type": "SIGMAS",
+          "links": [
+            87
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BasicScheduler",
+        "cnr_id": "comfy-core",
+        "ver": "0.31.0"
+      },
+      "widgets_values": [
+        "simple",
+        4,
+        0.15
+      ]
+    },
+    {
+      "id": 72,
+      "type": "Reroute",
+      "pos": [
+        2600,
+        -640
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 100
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "AUDIO",
+          "links": [
+            102
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 73,
+      "type": "Reroute",
+      "pos": [
+        5900,
+        -630
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 102
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "AUDIO",
+          "links": [
+            103
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 65,
+      "type": "ImageBatchRepeatInterleaving",
+      "pos": [
+        3450,
+        -20
+      ],
+      "size": [
+        310,
+        106
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 73
+        },
+        {
+          "name": "mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "repeats",
+          "type": "INT",
+          "widget": {
+            "name": "repeats"
+          },
+          "link": 82
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            76
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageBatchRepeatInterleaving",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ver": "20a283ee1c193a96a8c32301e27e9c3be3e762e9",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "widgets_values": [
+        1
+      ],
+      "title": "Repeat last frame"
+    },
+    {
+      "id": 66,
+      "type": "ImageBatchMulti",
+      "pos": [
+        3460,
+        120
+      ],
+      "size": [
+        270,
+        134
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_1",
+          "type": "IMAGE",
+          "link": 75
+        },
+        {
+          "name": "image_2",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 76
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            77
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ver": "20a283ee1c193a96a8c32301e27e9c3be3e762e9",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "widgets_values": [
+        2,
+        null
+      ],
+      "title": "Append padding frames"
+    },
+    {
+      "id": 21,
+      "type": "LatentUpscaleModelLoader",
+      "pos": [
+        3900,
+        840
+      ],
+      "size": [
+        410,
+        140
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT_UPSCALE_MODEL",
+          "type": "LATENT_UPSCALE_MODEL",
+          "links": [
+            13
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LatentUpscaleModelLoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0",
+        "models": [
+          {
+            "name": "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+            "url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+            "directory": "latent_upscale_models"
+          }
+        ]
+      },
+      "widgets_values": [
+        "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+      ],
+      "title": "LTX 2.5 spatial upscaler x2"
+    },
+    {
+      "id": 20,
+      "type": "LTXVImgToVideoInplace",
+      "pos": [
+        3930,
+        550
+      ],
+      "size": [
+        300,
+        180
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 16
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 99
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            95
+          ]
+        }
+      ],
+      "title": "Anchor first frame",
+      "properties": {
+        "Node name for S&R": "LTXVImgToVideoInplace",
+        "cnr_id": "comfy-core",
+        "ver": "0.7.0"
+      },
+      "widgets_values": [
+        1,
+        false
+      ]
+    },
+    {
+      "id": 6,
+      "type": "UNETLoader",
+      "pos": [
+        3880,
+        110
+      ],
+      "size": [
+        420,
+        130
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            4
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UNETLoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.29.0",
+        "models": [
+          {
+            "name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+            "url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/diffusion_models/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+            "directory": "diffusion_models"
+          }
+        ]
+      },
+      "widgets_values": [
+        "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+        "default"
+      ],
+      "title": "LTX 2.5 distilled INT8"
+    },
+    {
+      "id": 26,
+      "type": "VAEDecodeTiled",
+      "pos": [
+        5360,
+        -230
+      ],
+      "size": [
+        280,
+        200
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 98
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 24
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            83
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecodeTiled",
+        "cnr_id": "comfy-core",
+        "ver": "0.14.1"
+      },
+      "widgets_values": [
+        512,
+        64,
+        144,
+        48
+      ],
+      "title": "Decode video (tiled)"
+    },
+    {
+      "id": 75,
+      "type": "ImageFromBatch+",
+      "pos": [
+        2710,
+        -770
+      ],
+      "size": [
+        270,
+        114
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 106
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            107
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageFromBatch+",
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9"
+      },
+      "widgets_values": [
+        0,
+        1
+      ],
+      "title": "First frame for caption"
+    },
+    {
+      "id": 74,
+      "type": "AILab_QwenVL_GGUF",
+      "pos": [
+        3200,
+        -860
+      ],
+      "size": [
+        340,
+        286
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 107
+        },
+        {
+          "name": "video",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "RESPONSE",
+          "type": "STRING",
+          "links": [
+            105
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "AILab_QwenVL_GGUF",
+        "cnr_id": "comfyui-qwenvl",
+        "ver": "2.0.0"
+      },
+      "widgets_values": [
+        "Qwen3VL-4B-Instruct-Q8_0.gguf",
+        "📹 Video Summary",
+        "",
+        512,
+        false,
+        179095357,
+        "randomize"
+      ],
+      "color": "#474539",
+      "bgcolor": "#2c4045",
+      "title": "Caption first frame (Qwen3-VL)"
+    },
+    {
+      "id": 2,
+      "type": "Reroute",
+      "pos": [
+        3930,
+        -290
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 77
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 9,
+      "type": "VAELoader",
+      "pos": [
+        3890,
+        340
+      ],
+      "size": [
+        410,
+        86
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            2,
+            14,
+            16,
+            24,
+            94
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader",
+        "cnr_id": "comfy-core",
+        "ver": "0.29.0",
+        "models": [
+          {
+            "name": "ltx-2.5-video-vae-bf16.safetensors",
+            "url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/vae/ltx-2.5-video-vae-bf16.safetensors",
+            "directory": "vae"
+          }
+        ]
+      },
+      "widgets_values": [
+        "ltx-2.5-video-vae-bf16.safetensors"
+      ],
+      "title": "LTX 2.5 video VAE"
+    },
+    {
+      "id": 53,
+      "type": "GetImageSizeAndCount",
+      "pos": [
+        2320,
+        -10
+      ],
+      "size": [
+        470,
+        410
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 61
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "count",
+          "type": "INT",
+          "links": [
+            71
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GetImageSizeAndCount",
+        "aux_id": "kijai/ComfyUI-KJNodes",
+        "ver": "20a283ee1c193a96a8c32301e27e9c3be3e762e9",
+        "cnr_id": "comfyui-kjnodes"
+      },
+      "title": "Input dimensions and frame count"
+    },
+    {
+      "id": 7,
+      "type": "CLIPTextEncode",
+      "pos": [
+        4340,
+        -200
+      ],
+      "size": [
+        560,
+        310
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 5
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 105
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            7
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode",
+        "cnr_id": "comfy-core",
+        "ver": "0.3.56"
+      },
+      "widgets_values": [
+        ""
+      ],
+      "color": "#232",
+      "bgcolor": "#353",
+      "title": "Positive prompt from caption"
+    },
+    {
+      "id": 3,
+      "type": "VAEEncode",
+      "pos": [
+        4130,
+        -270
+      ],
+      "size": [
+        225,
+        78
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 1
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            113
+          ]
+        }
+      ],
+      "title": "Encode video",
+      "properties": {
+        "Node name for S&R": "VAEEncode",
+        "cnr_id": "comfy-core",
+        "ver": "0.31.0"
+      }
+    },
+    {
+      "id": 63,
+      "type": "ComfyMathExpression",
+      "pos": [
+        2900,
+        10
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "a",
+          "name": "values.a",
+          "type": "FLOAT,INT,BOOLEAN",
+          "link": 71
+        },
+        {
+          "name": "values.b",
+          "shape": 7,
+          "type": "FLOAT,INT,BOOLEAN",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": []
+        },
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            82
+          ]
+        },
+        {
+          "name": "BOOL",
+          "type": "BOOLEAN",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ComfyMathExpression",
+        "cnr_id": "comfy-core",
+        "ver": "0.32.0"
+      },
+      "widgets_values": [
+        "((8 - a) % 8) + 1"
+      ],
+      "title": "Pad to 8n+1 frames"
+    },
+    {
+      "id": 40,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        6130,
+        20
+      ],
+      "size": [
+        310,
+        573.625
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 85
+        },
+        {
+          "name": "audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 103
+        },
+        {
+          "name": "meta_batch",
+          "shape": 7,
+          "type": "VHS_BatchManager",
+          "link": null
+        },
+        {
+          "name": "vae",
+          "shape": 7,
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine",
+        "cnr_id": "comfyui-videohelpersuite",
+        "ver": "993082e4f2473bf4acaf06f51e33877a7eb38960"
+      },
+      "widgets_values": {
+        "frame_rate": 24,
+        "loop_count": 0,
+        "filename_prefix": "BrickVisual/LTX25_Upscale",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 23,
+        "save_metadata": false,
+        "trim_to_audio": false,
+        "pingpong": false,
+        "save_output": true
+      },
+      "title": "Save Video (24 fps)"
+    },
+    {
+      "id": 29,
+      "type": "VHS_LoadVideo",
+      "pos": [
+        1680,
+        -190
+      ],
+      "size": [
+        380,
+        578.25
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "meta_batch",
+          "shape": 7,
+          "type": "VHS_BatchManager",
+          "link": null
+        },
+        {
+          "name": "vae",
+          "shape": 7,
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            29,
+            61,
+            72,
+            75,
+            106
+          ]
+        },
+        {
+          "name": "frame_count",
+          "type": "INT",
+          "links": [
+            86
+          ]
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            100
+          ]
+        },
+        {
+          "name": "video_info",
+          "type": "VHS_VIDEOINFO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_LoadVideo",
+        "cnr_id": "comfyui-videohelpersuite",
+        "ver": "993082e4f2473bf4acaf06f51e33877a7eb38960"
+      },
+      "widgets_values": {
+        "video": "input.mp4",
+        "force_rate": 24,
+        "custom_width": 0,
+        "custom_height": 0,
+        "frame_load_cap": 0,
+        "skip_first_frames": 0,
+        "select_every_nth": 1,
+        "format": "AnimateDiff"
+      },
+      "title": "Input Video (24 fps)"
+    },
+    {
+      "id": 5,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        3890,
+        -90
+      ],
+      "size": [
+        400,
+        114
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            93,
+            96,
+            97
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "cnr_id": "comfy-core",
+        "ver": "0.31.0",
+        "models": [
+          {
+            "name": "ltx2.5-CQ-enhancer-lora-V2.safetensors",
+            "url": "https://huggingface.co/CQdesign/LTX-2.5-CQ-Video-and-Image-Enhancer-LoRAs/resolve/main/ltx2.5-CQ-enhancer-lora-V2.safetensors",
+            "directory": "loras"
+          }
+        ]
+      },
+      "widgets_values": [
+        "ltx2.5-CQ-enhancer-lora-V2.safetensors",
+        1
+      ],
+      "title": "CQ Enhancer V2 LoRA"
+    },
+    {
+      "id": 80,
+      "type": "Note",
+      "pos": [
+        2050,
+        -350
+      ],
+      "size": [
+        660,
+        320
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "properties": {},
+      "widgets_values": [
+        "LTX 2.5 Video Upscale | Experimental R&D\n\nUpload a short video at node 29. Start with frame_load_cap=49 or 97 for a memory check; 0 loads the full clip. Use source dimensions divisible by 32.\n\nInput, conditioning and output use 24 fps. Keep nodes 29, 10 and 40 in sync when changing rate; select_every_nth=1.\n\nLast-frame padding is removed after decoding. Qwen captions ONLY the first frame, even though the saved preset is Video Summary.\n\nModels, installation and limitations: see the repository README and docs/ltx25-video-upscale.md. The supplied DiffVAE is retained; CQdesign recommends the Conv VAE for its own workflow.\n\nStructurally checked; full LTX 2.5 inference has not been verified."
+      ],
+      "title": "Read first - setup and limitations",
+      "color": "#432",
+      "bgcolor": "#653"
+    }
+  ],
+  "links": [
+    [
+      1,
+      2,
+      0,
+      3,
+      0,
+      "IMAGE"
+    ],
+    [
+      2,
+      9,
+      0,
+      3,
+      1,
+      "VAE"
+    ],
+    [
+      4,
+      6,
+      0,
+      5,
+      0,
+      "MODEL"
+    ],
+    [
+      5,
+      17,
+      0,
+      7,
+      0,
+      "CLIP"
+    ],
+    [
+      6,
+      17,
+      0,
+      8,
+      0,
+      "CLIP"
+    ],
+    [
+      7,
+      7,
+      0,
+      10,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      8,
+      8,
+      0,
+      10,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      13,
+      21,
+      0,
+      16,
+      1,
+      "LATENT_UPSCALE_MODEL"
+    ],
+    [
+      14,
+      9,
+      0,
+      16,
+      2,
+      "VAE"
+    ],
+    [
+      16,
+      9,
+      0,
+      20,
+      0,
+      "VAE"
+    ],
+    [
+      18,
+      16,
+      0,
+      20,
+      2,
+      "LATENT"
+    ],
+    [
+      24,
+      9,
+      0,
+      26,
+      1,
+      "VAE"
+    ],
+    [
+      29,
+      29,
+      0,
+      30,
+      0,
+      "IMAGE"
+    ],
+    [
+      49,
+      10,
+      0,
+      33,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      50,
+      10,
+      1,
+      33,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      61,
+      29,
+      0,
+      53,
+      0,
+      "IMAGE"
+    ],
+    [
+      71,
+      53,
+      3,
+      63,
+      0,
+      "INT"
+    ],
+    [
+      72,
+      29,
+      0,
+      64,
+      0,
+      "IMAGE"
+    ],
+    [
+      73,
+      64,
+      0,
+      65,
+      0,
+      "IMAGE"
+    ],
+    [
+      75,
+      29,
+      0,
+      66,
+      0,
+      "IMAGE"
+    ],
+    [
+      76,
+      65,
+      0,
+      66,
+      1,
+      "IMAGE"
+    ],
+    [
+      77,
+      66,
+      0,
+      2,
+      0,
+      "IMAGE"
+    ],
+    [
+      82,
+      63,
+      1,
+      65,
+      2,
+      "INT"
+    ],
+    [
+      83,
+      26,
+      0,
+      70,
+      0,
+      "IMAGE"
+    ],
+    [
+      85,
+      70,
+      0,
+      40,
+      0,
+      "IMAGE"
+    ],
+    [
+      86,
+      29,
+      1,
+      70,
+      2,
+      "INT"
+    ],
+    [
+      87,
+      15,
+      0,
+      71,
+      4,
+      "SIGMAS"
+    ],
+    [
+      88,
+      33,
+      0,
+      71,
+      5,
+      "GUIDER"
+    ],
+    [
+      89,
+      12,
+      0,
+      71,
+      3,
+      "SAMPLER"
+    ],
+    [
+      91,
+      14,
+      0,
+      71,
+      2,
+      "NOISE"
+    ],
+    [
+      93,
+      5,
+      0,
+      71,
+      0,
+      "MODEL"
+    ],
+    [
+      94,
+      9,
+      0,
+      71,
+      1,
+      "VAE"
+    ],
+    [
+      95,
+      20,
+      0,
+      71,
+      6,
+      "LATENT"
+    ],
+    [
+      96,
+      5,
+      0,
+      15,
+      0,
+      "MODEL"
+    ],
+    [
+      97,
+      5,
+      0,
+      33,
+      0,
+      "MODEL"
+    ],
+    [
+      98,
+      71,
+      0,
+      26,
+      0,
+      "LATENT"
+    ],
+    [
+      99,
+      30,
+      0,
+      20,
+      1,
+      "IMAGE"
+    ],
+    [
+      100,
+      29,
+      2,
+      72,
+      0,
+      "AUDIO"
+    ],
+    [
+      102,
+      72,
+      0,
+      73,
+      0,
+      "AUDIO"
+    ],
+    [
+      103,
+      73,
+      0,
+      40,
+      1,
+      "AUDIO"
+    ],
+    [
+      105,
+      74,
+      0,
+      7,
+      1,
+      "STRING"
+    ],
+    [
+      106,
+      29,
+      0,
+      75,
+      0,
+      "IMAGE"
+    ],
+    [
+      107,
+      75,
+      0,
+      74,
+      0,
+      "IMAGE"
+    ],
+    [
+      113,
+      3,
+      0,
+      16,
+      0,
+      "LATENT"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "LTX2.5 Upscaler",
+      "bounding": [
+        3870,
+        -340,
+        2561.484073588106,
+        1352.701875363807
+      ],
+      "color": "#ae9f3c",
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "Load video and duplicate last frame",
+      "bounding": [
+        2220,
+        -430,
+        1541.0814956802838,
+        849.322189352353
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.65,
+      "offset": [
+        -1750,
+        600
+      ]
+    },
+    "frontendVersion": "1.53.6"
+  },
+  "version": 0.4
+}

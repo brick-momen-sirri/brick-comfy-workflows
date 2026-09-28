@@ -2,18 +2,19 @@
 
 > ⚠️ These are **experimental R&D workflows** under active development and testing. Their nodes, models, settings and outputs may change as testing continues.
 
-This repository contains three Brick Visual experiments for evaluating image-processing approaches in ComfyUI:
+This repository contains four R&D workflows for evaluating image and video processing in ComfyUI:
 
 | Workflow | Research focus |
 |---|---|
 | [General Enhancement](#1-general-enhancement) | Testing tile-based refinement of architectural renders, with optional body and face enhancement |
 | [Pro Upscale](#2-pro-upscale) | Comparing ×2 / ×4 SeedVR2 upscaling with an optional Flux detail pass against a faster single-model approach |
 | [Flux 2 Klein + RAW Enhancement](#3-flux-2-klein--raw-enhancement) | Exploring photoreal enhancement of raw renders with Flux.2 Klein and the experimental BVFinish LoRA |
+| [LTX 2.5 Video Upscale + CQ Enhancement](#4-ltx-25-video-upscale--cq-enhancement) | Testing 2× latent video upscaling and low-denoise refinement with source audio |
 
 Each workflow is provided in two formats:
 
-- **`<name>.json`**: the editor workflow, with subgraphs, groups, notes and toggles. Open it in ComfyUI.
-- **`<name>.api.json`**: the same graph in API format, with the default toggle values. Use it for `/prompt` or serverless deployment.
+- **`<name>.json`**: the editor workflow. The image workflows use subgraphs and toggles; the video workflow uses a flat graph with groups and a setup note. Open it in ComfyUI.
+- **`<name>.api.json`**: the same graph in API format, with the saved default settings. Use it for `/prompt` or serverless deployment.
 
 The graphs preserve the current experimental pipelines in editable and API-ready forms. Every toggle combination has been checked for valid execution paths; [Validation](#validation) explains how this was tested. Implementation notes are listed in [docs/workflows.md](docs/workflows.md#differences-from-the-momi-forge-app).
 
@@ -46,9 +47,12 @@ brick-comfy-workflows/
 │   ├── pro-upscale/
 │   │   ├── pro_upscale.json
 │   │   └── pro_upscale.api.json
-│   └── flux2-klein-raw-enhancement/
-│       ├── flux2_klein_raw_enhancement.json
-│       └── flux2_klein_raw_enhancement.api.json
+│   ├── flux2-klein-raw-enhancement/
+│   │   ├── flux2_klein_raw_enhancement.json
+│   │   └── flux2_klein_raw_enhancement.api.json
+│   └── ltx25-video-upscale/
+│       ├── ltx25_video_upscale.json
+│       └── ltx25_video_upscale.api.json
 ├── config/
 │   ├── custom-nodes.json                         # node packs, repositories, pinned commits
 │   └── models.json                               # model inventory, folders, verified download URLs
@@ -58,13 +62,14 @@ brick-comfy-workflows/
 │   └── validate_workflows.py                     # static checks against a running ComfyUI
 ├── docs/
 │   ├── workflows.md                              # stage-by-stage details, parity with the app
+│   ├── ltx25-video-upscale.md                     # video setup, stages and inspection notes
 │   ├── api-usage.md                              # node IDs for inputs, toggles and parameters
 │   └── validation.md                             # what was validated and how
 └── examples/
     └── README.md                                 # input guidelines (no sample images, see note)
 ```
 
-No model weights, generated images, credentials or local paths are stored in this repository.
+No model weights, input/output media, credentials or local paths are stored in this repository.
 
 ---
 
@@ -108,7 +113,7 @@ If Stages 1 and 2 are both off, no tiling happens. The original image then goes 
 
 **Limitations**
 
-- It needs 15 model files and 10 node packs, the largest dependency set of the three.
+- It needs 15 model files and 10 node packs, the largest dependency set of the four.
 - The Fluxmania FP4 model needs a Blackwell GPU (see [limitations](#known-limitations-rd)).
 - Very small crops (under ~450 px on a side after resizing) make the tile grid 0 rows or columns, and the tile node fails. The same happens in the app.
 - The painted mask comes from the image's alpha channel (ComfyUI Mask Editor). The app used a red brush on a separate layer.
@@ -165,11 +170,29 @@ If Stages 1 and 2 are both off, no tiling happens. The original image then goes 
 - Only the one-image Edit and RAW modes of the app are included. Reference Transfer, Consistency and Realistic use other internal LoRAs and are out of scope here.
 - FLUX.2 [klein] 9B is released under the FLUX Non-Commercial License.
 
+### 4. LTX 2.5 Video Upscale + CQ Enhancement
+
+`workflows/ltx25-video-upscale/ltx25_video_upscale.json`
+
+**What it does.** Loads a video, pads its frame count for LTX, spatially upscales its latents ×2, and refines them using LTX 2.5 distilled INT8 with the CQ Enhancer V2 LoRA. Qwen3-VL captions the first frame. Tiled decoding is followed by removal of padding and H.264 MP4 output with source audio.
+
+**Inputs:** a short video with dimensions divisible by 32. Upload at node `29`; `input.mp4` is a placeholder. Start with a `frame_load_cap` of 49 or 97 to check memory use.
+
+**Defaults:** 24 fps input/output, no skipped frames, LoRA 1.0, Euler ancestral / simple, 4 steps, denoise 0.15, seed 42. The saved frame cap of 0 loads the full clip. There are no stage toggles.
+
+**Outputs:** approximately twice the input width and height, with the loaded frame count, saved under `output/BrickVisual/LTX25_Upscale*`.
+
+**Requirements:** recent ComfyUI (checked against 0.37.0 / frontend 1.53.6), five custom-node packs, seven model files (~45.8 GB), FFmpeg, and QwenVL's CUDA/vision runtime.
+
+**Inspection findings:** corrected an `8n+1` frame-padding edge case, removed saved local previews, corrected dependency labels, reset the 75-frame skip, and aligned input/output frame rates. The supplied DiffVAE and sampling choices are retained; CQdesign recommends a different VAE for its own reference workflow. **Full video inference has not been verified.**
+
+See the [complete video guide](docs/ltx25-video-upscale.md) for model download links, exact folders, all stages, changes from the supplied graph and limitations.
+
 ---
 
 ## How the toggles work
 
-Every optional stage is gated by the core ComfyUI **Switch** node (`ComfySwitchNode`), which evaluates its branches **lazily**:
+In the three image workflows, every optional stage is gated by the core ComfyUI **Switch** node (`ComfySwitchNode`), which evaluates its branches **lazily**:
 
 ```text
                   ┌──► [ Stage subgraph ] ──► on_true ───┐
@@ -194,7 +217,8 @@ Each stage is a named **subgraph**. Double-click it to open it; every subgraph h
 
 Use a recent ComfyUI that has the core **Switch** node (added December 2025) and a frontend with subgraph support.
 
-- Validated with ComfyUI **0.12.3** / frontend **1.38.13**.
+- Image workflows originally validated with ComfyUI **0.12.3** / frontend **1.38.13**.
+- **LTX 2.5 requires newer core model support**: checked against ComfyUI **0.37.0** / frontend **1.53.6**; see its [setup guide](docs/ltx25-video-upscale.md#setup).
 - Our RunPod images run ComfyUI **0.20–0.24** (frontend 1.42–1.44).
 
 ```bash
@@ -239,23 +263,26 @@ The core ComfyUI nodes (samplers, loaders, `LoadImage`, `SaveImage`, `ComfySwitc
 
 | Node pack | Repository | Pinned ref | Why it is required | Used by |
 |---|---|---|---|---|
-| ComfyUI_essentials | [cubiq/ComfyUI_essentials](https://github.com/cubiq/ComfyUI_essentials) | `9d9f4be` | Conditional resizing, tile/untile grid, size maths, batch↔list conversion (`ImageResize+`, `ImageTile+`, `ImageUntile+`, `SimpleMath+`, …) | all three |
+| ComfyUI_essentials | [cubiq/ComfyUI_essentials](https://github.com/cubiq/ComfyUI_essentials) | `9d9f4be` | Conditional resizing, tile/untile grid, size maths, batch↔list conversion (`ImageResize+`, `ImageTile+`, `ImageUntile+`, `SimpleMath+`, …) | all four |
 | ComfyUI-Inpaint-CropAndStitch | [lquesada/ComfyUI-Inpaint-CropAndStitch](https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch) | `8584b08` (3.0.17) | Crops the working area with context and blends the result back (`InpaintCropImproved`, `InpaintStitchImproved`) | General Enhancement |
 | ComfyUI-Impact-Pack | [ltdrdata/ComfyUI-Impact-Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack) | `6a517eb` (8.28.2) | Body and face detailers, SAM loader, batch→list (`FaceDetailerPipe`, `ToDetailerPipe`, `SAMLoader`, …) | General Enhancement |
 | ComfyUI-Impact-Subpack | [ltdrdata/ComfyUI-Impact-Subpack](https://github.com/ltdrdata/ComfyUI-Impact-Subpack) | `50c7b71` (1.3.5) | YOLO person and face detectors (`UltralyticsDetectorProvider`) | General Enhancement |
 | ComfyUI-Custom-Scripts | [pythongosssss/ComfyUI-Custom-Scripts](https://github.com/pythongosssss/ComfyUI-Custom-Scripts) | `aac13aa` (1.2.5) | Prompt assembly with the app's append/tidy rules (`StringFunction`) | General Enhancement |
-| ComfyUI-QwenVL | [1038lab/ComfyUI-QwenVL](https://github.com/1038lab/ComfyUI-QwenVL) | `517aed6` (2.3.1) | Qwen3-VL captioning: per-tile captions, and the RAW prompt (`AILab_QwenVL_GGUF`) | General Enhancement, Klein |
-| ComfyUI-KJNodes | [kijai/ComfyUI-KJNodes](https://github.com/kijai/ComfyUI-KJNodes) | `20a283e` (1.2.8) | Pass-through and 512 px resize for captioning (`ImagePass`, `ImageResizeKJv2`) | General Enhancement |
+| ComfyUI-QwenVL | [1038lab/ComfyUI-QwenVL](https://github.com/1038lab/ComfyUI-QwenVL) | `517aed6` (2.3.1) | Qwen3-VL captioning: per-tile captions, and the RAW prompt (`AILab_QwenVL_GGUF`) | General Enhancement, Klein, LTX 2.5 |
+| ComfyUI-KJNodes | [kijai/ComfyUI-KJNodes](https://github.com/kijai/ComfyUI-KJNodes) | `20a283e` (1.2.8) | Image helpers for captioning and video frame padding/trimming | General Enhancement, LTX 2.5 |
 | ComfyUI-post-processing-nodes | [EllangoK/ComfyUI-post-processing-nodes](https://github.com/EllangoK/ComfyUI-post-processing-nodes) | `c96ce3b` (1.0.1) | The Sharpen blend (`Blend`) | General Enhancement |
 | ComfyUI-Easy-Use | [yolain/ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use) | `v1.3.4` | Re-batching tiles before untiling, as in the app (`easy imageListToImageBatch`) | General Enhancement |
 | ComfyUI-nunchaku | [nunchux-ai/ComfyUI-nunchaku](https://github.com/nunchux-ai/ComfyUI-nunchaku) | `v1.2.1` | Loads the SVDQuant 4-bit Fluxmania model (`NunchakuFluxDiTLoader`) | General Enhancement, Pro Upscale |
 | ComfyUI-SeedVR2_VideoUpscaler | [numz/ComfyUI-SeedVR2_VideoUpscaler](https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler) | `4490bd1` (2.5.24) | SeedVR2 DiT/VAE loaders and upscaler | Pro Upscale |
+| ComfyUI-VideoHelperSuite | [Kosinkadink/ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) | `993082e` (1.7.9) | Video loading, source audio, MP4 export | LTX 2.5 |
+| ComfyUI-LTXVideo | [Lightricks/ComfyUI-LTXVideo](https://github.com/Lightricks/ComfyUI-LTXVideo) | `ac4d998` | Temporal looping sampler | LTX 2.5 |
 
 Per workflow:
 
 - **General Enhancement:** essentials, Inpaint-CropAndStitch, Impact-Pack, Impact-Subpack, Custom-Scripts, QwenVL, KJNodes, post-processing, Easy-Use, nunchaku (10 packs).
 - **Pro Upscale:** essentials, SeedVR2, nunchaku (3 packs).
 - **Flux 2 Klein + RAW:** essentials, QwenVL (2 packs).
+- **LTX 2.5 Video Upscale:** essentials, QwenVL, KJNodes, VideoHelperSuite, LTXVideo (5 packs).
 
 The editor `.json` files store widget values by position, so keep the pinned versions. The `.api.json` files use named inputs and are less sensitive to node versions.
 
@@ -276,8 +303,8 @@ All download locations were checked on 2026-09-28. When the official publisher d
 | `easynegative.safetensors` | Textual inversion (SD 1.5 negative embedding) | General Enhancement | `models/embeddings/` | Mirror: [embed/EasyNegative](https://huggingface.co/embed/EasyNegative) · Official: [Civitai](https://civitai.com/models/7808?modelVersionId=9208) |
 | `epiCNegative.pt` | Textual inversion (SD 1.5 negative embedding) | General Enhancement | `models/embeddings/` | Mirror: [dn118/epicnegative](https://huggingface.co/dn118/epicnegative) · Official: [Civitai](https://civitai.com/models/89484?modelVersionId=95263) |
 | `1x-ReFocus-V3.pth` | Upscale model (ESRGAN 1x, sharpening) | General Enhancement | `models/upscale_models/` | Mirror: [notkenski/upscalers](https://huggingface.co/notkenski/upscalers) · Official: [OpenModelDB](https://openmodeldb.info/models/1x-ReFocus-V3) |
-| `Qwen3VL-4B-Instruct-Q8_0.gguf` | Vision-language model (Qwen3-VL 4B Instruct, GGUF Q8_0) | General Enhancement, Flux 2 Klein + RAW | `models/llm/GGUF/Qwen/Qwen3-VL-4B-Instruct-GGUF/` | [Qwen/Qwen3-VL-4B-Instruct-GGUF](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct-GGUF) |
-| `mmproj-Qwen3VL-4B-Instruct-F16.gguf` | Vision projector for Qwen3-VL 4B (GGUF F16) | General Enhancement, Flux 2 Klein + RAW | `models/llm/GGUF/Qwen/Qwen3-VL-4B-Instruct-GGUF/` | [Qwen/Qwen3-VL-4B-Instruct-GGUF](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct-GGUF) |
+| `Qwen3VL-4B-Instruct-Q8_0.gguf` | Vision-language model (Qwen3-VL 4B Instruct, GGUF Q8_0) | General Enhancement, Flux 2 Klein + RAW, LTX 2.5 | `models/llm/GGUF/Qwen/Qwen3-VL-4B-Instruct-GGUF/` | [Qwen/Qwen3-VL-4B-Instruct-GGUF](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct-GGUF) |
+| `mmproj-Qwen3VL-4B-Instruct-F16.gguf` | Vision projector for Qwen3-VL 4B (GGUF F16) | General Enhancement, Flux 2 Klein + RAW, LTX 2.5 | `models/llm/GGUF/Qwen/Qwen3-VL-4B-Instruct-GGUF/` | [Qwen/Qwen3-VL-4B-Instruct-GGUF](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct-GGUF) |
 | `sam_vit_b_01ec64.pth` | Segmentation model (Segment Anything ViT-B) | General Enhancement | `models/sams/` | [Meta download](https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth) (no official HF `.pth`) |
 | `face_yolov8m.pt` | Detector (YOLOv8m face, bbox) | General Enhancement | `models/ultralytics/bbox/` | [Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer) |
 | `person_yolov8m-seg.pt` | Detector (YOLOv8m person, segmentation) | General Enhancement | `models/ultralytics/segm/` | [Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer) |
@@ -289,8 +316,15 @@ All download locations were checked on 2026-09-28. When the official publisher d
 | `qwen_3_8b_fp8mixed.safetensors` | Text encoder (Qwen3 8B, fp8 mixed) | Flux 2 Klein + RAW | `models/text_encoders/` | [Comfy-Org/flux2-klein-9B](https://huggingface.co/Comfy-Org/flux2-klein-9B) (`split_files/text_encoders/`) |
 | `flux2-vae.safetensors` | VAE (FLUX.2) | Flux 2 Klein + RAW | `models/vae/` | [Comfy-Org/flux2-dev](https://huggingface.co/Comfy-Org/flux2-dev) (`split_files/vae/`) |
 | `Klein_9B_bvfinish_v01.safetensors` | LoRA (FLUX.2 [klein] 9B, RAW Enhancement) | Flux 2 Klein + RAW | `models/loras/` | [BrickMomen/raw-enhancement](https://huggingface.co/BrickMomen/raw-enhancement) |
+| `ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors` | LTX 2.5 distilled transformer (Comfy INT8 ConvRot) | LTX 2.5 | `models/diffusion_models/` | [Lightricks/LTX-2.5](https://huggingface.co/Lightricks/LTX-2.5/resolve/main/diffusion_models/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors) (gated) |
+| `gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors` | Gemma 4 text encoder with LTX 2.5 projection (Comfy INT8 ConvRot) | LTX 2.5 | `models/text_encoders/` | [Lightricks/LTX-2.5](https://huggingface.co/Lightricks/LTX-2.5/resolve/main/text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors) (gated) |
+| `ltx-2.5-video-vae-bf16.safetensors` | LTX 2.5 video VAE (DiffVAE, BF16) | LTX 2.5 | `models/vae/` | [Lightricks/LTX-2.5](https://huggingface.co/Lightricks/LTX-2.5/resolve/main/vae/ltx-2.5-video-vae-bf16.safetensors) (gated) |
+| `ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors` | LTX 2.5 spatial latent upscaler x2 (BF16) | LTX 2.5 | `models/latent_upscale_models/` | [Lightricks/LTX-2.5](https://huggingface.co/Lightricks/LTX-2.5/resolve/main/latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors) (gated) |
+| `ltx2.5-CQ-enhancer-lora-V2.safetensors` | LoRA (LTX 2.5, CQ Enhancer V2) | LTX 2.5 | `models/loras/` | [CQdesign/LTX-2.5-CQ-Video-and-Image-Enhancer-LoRAs](https://huggingface.co/CQdesign/LTX-2.5-CQ-Video-and-Image-Enhancer-LoRAs/resolve/main/ltx2.5-CQ-enhancer-lora-V2.safetensors) |
 
-Approximate download size per workflow: **General Enhancement 20.6 GB**, **Pro Upscale 22.1 GB**, **Flux 2 Klein + RAW 23.7 GB**. The Fluxmania model, Flux text encoders and VAE (about 12.8 GB) are shared by General Enhancement and Pro Upscale, and the Qwen3-VL files (5.1 GB) by General Enhancement and Klein.
+The seven LTX 2.5 files and their direct downloads are listed in the [video model table](docs/ltx25-video-upscale.md#models-and-exact-folders) and included in `config/models.json`. Its Qwen files are shared with the image workflows.
+
+Approximate download size per workflow: **General Enhancement 20.6 GB**, **Pro Upscale 22.1 GB**, **Flux 2 Klein + RAW 23.7 GB**, **LTX 2.5 Video Upscale 45.8 GB**. The Fluxmania model, Flux text encoders and VAE (about 12.8 GB) are shared by General Enhancement and Pro Upscale, and the Qwen3-VL files (5.1 GB) by General Enhancement and Klein.
 
 ---
 
@@ -307,16 +341,21 @@ Download the BVFinish LoRA from [BrickMomen/raw-enhancement](https://huggingface
 
 The download script below also retrieves this file automatically when `flux2-klein-raw-enhancement` is selected.
 
+### LoRA: CQ Enhancer V2 (LTX 2.5)
+
+Download [`ltx2.5-CQ-enhancer-lora-V2.safetensors`](https://huggingface.co/CQdesign/LTX-2.5-CQ-Video-and-Image-Enhancer-LoRAs/resolve/main/ltx2.5-CQ-enhancer-lora-V2.safetensors) from [CQdesign](https://huggingface.co/CQdesign/LTX-2.5-CQ-Video-and-Image-Enhancer-LoRAs) into `ComfyUI/models/loras/`. The supplied workflow uses strength **1.0**. It is included when the download script selects `--workflow ltx25-video-upscale`.
+
 **Scripted** (standard library only; files that already exist are skipped):
 
 ```bash
-export HF_TOKEN=hf_xxx        # needed for the two gated Black Forest Labs files
+export HF_TOKEN=hf_xxx        # needed for gated Black Forest Labs and Lightricks files
 python scripts/download_models.py --comfyui /path/to/ComfyUI --dry-run            # show the plan
 python scripts/download_models.py --comfyui /path/to/ComfyUI                      # everything
 python scripts/download_models.py --comfyui /path/to/ComfyUI --workflow pro-upscale
+python scripts/download_models.py --comfyui /path/to/ComfyUI --workflow ltx25-video-upscale
 ```
 
-Before downloading the gated files, open [FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) and [FLUX.2-klein-9b-fp8](https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8) once while logged in and accept the terms.
+Before downloading the gated files, open [FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) and [FLUX.2-klein-9b-fp8](https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8) once while logged in and accept the terms. For video, also accept the terms at [Lightricks/LTX-2.5](https://huggingface.co/Lightricks/LTX-2.5).
 
 **Manual:** download the files from the table and place them like this. Only the folders these workflows use are shown:
 
@@ -327,17 +366,23 @@ ComfyUI/
     │   └── epicrealism_naturalSinRC1VAE.safetensors
     ├── diffusion_models/
     │   ├── svdq-fp4_r32-fluxmania-legacy.safetensors
-    │   └── flux-2-klein-9b-fp8.safetensors
+    │   ├── flux-2-klein-9b-fp8.safetensors
+    │   └── ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors
     ├── text_encoders/
     │   ├── clip_l.safetensors
     │   ├── t5xxl_fp8_e4m3fn_scaled.safetensors
-    │   └── qwen_3_8b_fp8mixed.safetensors
+    │   ├── qwen_3_8b_fp8mixed.safetensors
+    │   └── gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors
     ├── vae/
     │   ├── ae.safetensors
-    │   └── flux2-vae.safetensors
+    │   ├── flux2-vae.safetensors
+    │   └── ltx-2.5-video-vae-bf16.safetensors
     ├── loras/
     │   ├── detailSliderALT2.safetensors
-    │   └── Klein_9B_bvfinish_v01.safetensors
+    │   ├── Klein_9B_bvfinish_v01.safetensors
+    │   └── ltx2.5-CQ-enhancer-lora-V2.safetensors
+    ├── latent_upscale_models/
+    │   └── ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors
     ├── embeddings/
     │   ├── easynegative.safetensors                 # save with this lower-case name
     │   └── epiCNegative.pt
@@ -369,20 +414,22 @@ Notes:
 
 ## Running the workflows
 
-**In the ComfyUI editor**
+**Image workflows in the ComfyUI editor**
 
 1. Drag a `workflows/<name>/<name>.json` file onto the canvas.
 2. Load an image into `Input Image`.
 3. Set the **Toggle** nodes and the stage parameters.
 4. Run. Results are saved under `output/BrickVisual/`.
 
-**Through the API:** use the `.api.json` files. Upload the image (`POST /upload/image`, or the `images` array of a worker-comfyui payload), set `inputs.image` on node `1`, and set the toggles or parameters by node ID. Then `POST /prompt`. [docs/api-usage.md](docs/api-usage.md) has the node ID tables and a Python example. For per-run randomness, as in the app, randomise the listed seed inputs before each request.
+**Video workflow:** follow the [LTX 2.5 run instructions](docs/ltx25-video-upscale.md#run-in-the-editor), upload a video at node `29`, and keep its input/conditioning/output frame rates aligned.
+
+**Image workflows through the API:** use the `.api.json` files. Upload the image (`POST /upload/image`, or the `images` array of a worker-comfyui payload), set `inputs.image` on node `1`, and set the toggles or parameters by node ID. Then `POST /prompt`. [docs/api-usage.md](docs/api-usage.md) has the node ID tables and a Python example. For per-run randomness, as in the app, randomise the listed seed inputs before each request.
 
 ---
 
 ## Validation
 
-Summary; details and reproduction steps are in [docs/validation.md](docs/validation.md).
+The following checks describe the **three original image workflows**. The new LTX 2.5 workflow has a [separate validation record](docs/validation.md#ltx-25-video-workflow) and has not been rendered end to end. Details and reproduction steps are in [docs/validation.md](docs/validation.md).
 
 | Check | Result |
 |---|---|
@@ -404,6 +451,7 @@ python scripts/validate_workflows.py --url http://127.0.0.1:8188 --strict-models
 
 ## Known limitations (R&D)
 
+- **Video memory and quality.** LTX 2.5 loads a full frame batch and uses untiled VAE encoding. Test short clips first; runtime compatibility, audio sync and output quality remain unverified. See the [video limitations](docs/ltx25-video-upscale.md#rd-limitations).
 - **R&D status.** Defaults, models and graph structure may still change. Do not treat outputs as final deliverables without review.
 - **GPU.** The Fluxmania SVDQuant **FP4** model requires an NVIDIA **Blackwell** GPU (RTX 50xx / RTX PRO 6000). Our RunPod endpoints for these two workflows use 32 GB and 96 GB Blackwell-class GPUs. On Ada or Ampere GPUs, download `svdq-int4_r32-fluxmania-legacy.safetensors` from the same repository and select it in the Nunchaku loader (not validated).
 - **All branches must be installed.** ComfyUI validates every node in the graph, including branches a toggle disables. For example, "Super Fast only" still needs the SeedVR2 and Flux models present.
