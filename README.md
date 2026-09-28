@@ -8,7 +8,7 @@ This repository contains three Brick Visual experiments for evaluating image-pro
 |---|---|
 | [General Enhancement](#1-general-enhancement) | Testing tile-based refinement of architectural renders, with optional body and face enhancement |
 | [Pro Upscale](#2-pro-upscale) | Comparing ×2 / ×4 SeedVR2 upscaling with an optional Flux detail pass against a faster single-model approach |
-| [Flux 2 Klein + RAW Enhancement](#3-flux-2-klein--raw-enhancement) | Exploring photoreal enhancement of raw renders with Flux.2 Klein and an experimental internal LoRA |
+| [Flux 2 Klein + RAW Enhancement](#3-flux-2-klein--raw-enhancement) | Exploring photoreal enhancement of raw renders with Flux.2 Klein and the experimental BVFinish LoRA |
 
 Each workflow is provided in two formats:
 
@@ -27,7 +27,6 @@ The graphs preserve the current experimental pipelines in editable and API-ready
 - [Installation](#installation)
 - [Custom nodes](#custom-nodes)
 - [Required models](#required-models)
-- [Internal / unpublished models](#internal--unpublished-models)
 - [Model download instructions](#model-download-instructions)
 - [Running the workflows](#running-the-workflows)
 - [Validation](#validation)
@@ -147,7 +146,7 @@ If Stages 1 and 2 are both off, no tiling happens. The original image then goes 
 
 **What it does.** It is a FLUX.2 [klein] 9B (distilled, 4 steps) reference-image edit. The input is scaled to about 1 MP and padded to a multiple of 32 px, and the result is cropped back to the input size.
 
-- **RAW Enhancement on** (default): loads the internal **bvfinish** LoRA (strength 1.0). Qwen3-VL writes the prompt from the image, using a fixed captioning instruction that starts with the `bvfinish` trigger. The Edit Prompt is ignored.
+- **RAW Enhancement on** (default): loads the **BVFinish** LoRA (strength 1.0). Qwen3-VL writes the prompt from the image, using a fixed captioning instruction that starts with the `bvfinish` trigger. The Edit Prompt is ignored.
 - **RAW Enhancement off:** a plain Flux.2 Klein edit driven by the `Edit Prompt` (no LoRA, no captioning).
 
 **Inputs:** `Input Image` (RGB); `Edit Prompt` (RAW off only).
@@ -163,7 +162,6 @@ If Stages 1 and 2 are both off, no tiling happens. The original image then goes 
 
 **Limitations**
 
-- The bvfinish LoRA is internal and not yet published (see [below](#internal--unpublished-models)).
 - Only the one-image Edit and RAW modes of the app are included. Reference Transfer, Consistency and Realistic use other internal LoRAs and are out of scope here.
 - FLUX.2 [klein] 9B is released under the FLUX Non-Commercial License.
 
@@ -290,24 +288,9 @@ All download locations were checked on 2026-09-28. When the official publisher d
 | `flux-2-klein-9b-fp8.safetensors` | Diffusion model (FLUX.2 [klein] 9B distilled, fp8) | Flux 2 Klein + RAW | `models/diffusion_models/` | [black-forest-labs/FLUX.2-klein-9b-fp8](https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8) (gated) |
 | `qwen_3_8b_fp8mixed.safetensors` | Text encoder (Qwen3 8B, fp8 mixed) | Flux 2 Klein + RAW | `models/text_encoders/` | [Comfy-Org/flux2-klein-9B](https://huggingface.co/Comfy-Org/flux2-klein-9B) (`split_files/text_encoders/`) |
 | `flux2-vae.safetensors` | VAE (FLUX.2) | Flux 2 Klein + RAW | `models/vae/` | [Comfy-Org/flux2-dev](https://huggingface.co/Comfy-Org/flux2-dev) (`split_files/vae/`) |
-| `Klein_9B_bvfinish_v01.safetensors` | LoRA (FLUX.2 [klein] 9B, RAW Enhancement) | Flux 2 Klein + RAW | `models/loras/` | **Internal model — Hugging Face repository pending** |
+| `Klein_9B_bvfinish_v01.safetensors` | LoRA (FLUX.2 [klein] 9B, RAW Enhancement) | Flux 2 Klein + RAW | `models/loras/` | [BrickMomen/raw-enhancement](https://huggingface.co/BrickMomen/raw-enhancement) |
 
-Approximate download size per workflow: **General Enhancement 20.6 GB**, **Pro Upscale 22.1 GB**, **Flux 2 Klein + RAW 23.5 GB** (without the internal LoRA). The Fluxmania model, Flux text encoders and VAE (about 12.8 GB) are shared by General Enhancement and Pro Upscale, and the Qwen3-VL files (5.1 GB) by General Enhancement and Klein.
-
----
-
-## Internal / unpublished models
-
-| Model | Workflow | Location | Status | Hugging Face repository |
-|---|---|---|---|---|
-| `Klein_9B_bvfinish_v01.safetensors` (RAW Enhancement LoRA, trigger `bvfinish`, strength 1.0) | Flux 2 Klein + RAW | `models/loras/` | **Internal model — Hugging Face repository pending** | _to be added_ |
-
-When the repository exists, add the URL in two places:
-
-1. The table above.
-2. `config/models.json`: set `download_url` to `https://huggingface.co/<org>/<repo>/resolve/main/Klein_9B_bvfinish_v01.safetensors` and `hf_repo`, and remove `"status": "internal"`.
-
-After that, `scripts/download_models.py` picks it up automatically. Keep the file name unchanged: the workflow references it by that exact name.
+Approximate download size per workflow: **General Enhancement 20.6 GB**, **Pro Upscale 22.1 GB**, **Flux 2 Klein + RAW 23.7 GB**. The Fluxmania model, Flux text encoders and VAE (about 12.8 GB) are shared by General Enhancement and Pro Upscale, and the Qwen3-VL files (5.1 GB) by General Enhancement and Klein.
 
 ---
 
@@ -343,7 +326,7 @@ ComfyUI/
     │   └── flux2-vae.safetensors
     ├── loras/
     │   ├── detailSliderALT2.safetensors
-    │   └── Klein_9B_bvfinish_v01.safetensors        # internal
+    │   └── Klein_9B_bvfinish_v01.safetensors
     ├── embeddings/
     │   ├── easynegative.safetensors                 # save with this lower-case name
     │   └── epiCNegative.pt

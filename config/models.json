@@ -250,13 +250,13 @@
       "folder": "loras",
       "type": "LoRA (FLUX.2 [klein] 9B, RAW Enhancement / bvfinish)",
       "used_by": ["flux2-klein-raw-enhancement"],
-      "download_url": null,
-      "hf_repo": null,
-      "status": "internal",
-      "official": "Internal Brick Visual model",
-      "auth": "private",
-      "license": "Internal",
-      "notes": "Internal model — Hugging Face repository pending. Trigger token: bvfinish. Place it directly in models/loras/ (no subfolder)."
+      "download_url": "https://huggingface.co/BrickMomen/raw-enhancement/resolve/main/Klein_9B_bvfinish_v01.safetensors",
+      "hf_repo": "BrickMomen/raw-enhancement",
+      "size_mib": 158,
+      "official": "Brick Visual model",
+      "auth": "public",
+      "license": "Apache-2.0 (repository card)",
+      "notes": "Trigger token: bvfinish. Recommended strength: 1.0. Place it directly in models/loras/ (no subfolder)."
     }
   ]
 }

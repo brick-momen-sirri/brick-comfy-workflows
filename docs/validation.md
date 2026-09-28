@@ -47,7 +47,7 @@ Each editor workflow was loaded with `app.loadGraphData`. The check covered ever
 
 The script checks the installed node definitions (`/object_info`): classes, required inputs, link types and value ranges. Result: **0 errors** in all three workflows.
 
-The only findings were files not present on the test machine: `input.png` (a placeholder), the Fluxmania FP4 model, the Ultralytics and SAM models, and the internal bvfinish LoRA. On a fully provisioned machine, run it with `--strict-models`.
+The only findings were files not present on the test machine: `input.png` (a placeholder), the Fluxmania FP4 model, the Ultralytics and SAM models, and the BVFinish LoRA. On a fully provisioned machine, run it with `--strict-models`.
 
 Every toggle combination reaches `Save Result` (22 combinations). The script also reports how many nodes of each stage run, e.g. with only Body & Face on:
 
