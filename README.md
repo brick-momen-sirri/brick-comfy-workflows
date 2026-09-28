@@ -411,7 +411,6 @@ python scripts/validate_workflows.py --url http://127.0.0.1:8188 --strict-models
 ## Known limitations (R&D)
 
 - **R&D status.** Defaults, models and graph structure may still change. Do not treat outputs as final deliverables without review.
-- **Licences.** Several models are released under non-commercial licences: FLUX.1 [dev] derivatives (Fluxmania), FLUX.2 [klein] 9B, and 1x-ReFocus-V3 (CC-BY-NC-SA-4.0). Check each licence in [config/models.json](config/models.json) and with the publisher before commercial use.
 - **GPU.** The Fluxmania SVDQuant **FP4** model requires an NVIDIA **Blackwell** GPU (RTX 50xx / RTX PRO 6000). Our RunPod endpoints for these two workflows use 32 GB and 96 GB Blackwell-class GPUs. On Ada or Ampere GPUs, download `svdq-int4_r32-fluxmania-legacy.safetensors` from the same repository and select it in the Nunchaku loader (not validated).
 - **All branches must be installed.** ComfyUI validates every node in the graph, including branches a toggle disables. For example, "Super Fast only" still needs the SeedVR2 and Flux models present.
 - **Input preparation differs slightly from the app.** The app re-encodes inputs as JPEG (quality 75) before sending them; these workflows read the file as is. Expect small pixel-level differences.
