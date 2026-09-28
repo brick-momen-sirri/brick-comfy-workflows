@@ -146,7 +146,7 @@ If Stages 1 and 2 are both off, no tiling happens. The original image then goes 
 
 **What it does.** It is a FLUX.2 [klein] 9B (distilled, 4 steps) reference-image edit. The input is scaled to about 1 MP and padded to a multiple of 32 px, and the result is cropped back to the input size.
 
-- **RAW Enhancement on** (default): loads the **BVFinish** LoRA (strength 1.0). Qwen3-VL writes the prompt from the image, using a fixed captioning instruction that starts with the `bvfinish` trigger. The Edit Prompt is ignored.
+- **RAW Enhancement on** (default): loads the [**BVFinish** LoRA](https://huggingface.co/BrickMomen/raw-enhancement) (strength 1.0). Qwen3-VL writes the prompt from the image, using a fixed captioning instruction that starts with the `bvfinish` trigger. The Edit Prompt is ignored.
 - **RAW Enhancement off:** a plain Flux.2 Klein edit driven by the `Edit Prompt` (no LoRA, no captioning).
 
 **Inputs:** `Input Image` (RGB); `Edit Prompt` (RAW off only).
@@ -295,6 +295,17 @@ Approximate download size per workflow: **General Enhancement 20.6 GB**, **Pro U
 ---
 
 ## Model download instructions
+
+### LoRA: BVFinish RAW Enhancement
+
+Download the BVFinish LoRA from [BrickMomen/raw-enhancement](https://huggingface.co/BrickMomen/raw-enhancement):
+
+- **File:** [`Klein_9B_bvfinish_v01.safetensors`](https://huggingface.co/BrickMomen/raw-enhancement/resolve/main/Klein_9B_bvfinish_v01.safetensors)
+- **ComfyUI location:** `ComfyUI/models/loras/Klein_9B_bvfinish_v01.safetensors`
+- **Trigger token:** `bvfinish`
+- **Recommended strength:** `1.0`
+
+The download script below also retrieves this file automatically when `flux2-klein-raw-enhancement` is selected.
 
 **Scripted** (standard library only; files that already exist are skipped):
 
