@@ -1,21 +1,21 @@
 # Brick Visual · ComfyUI Workflows
 
-> ⚠️ These workflows are currently **R&D workflows** and are still under active development and testing. They should not yet be considered production-ready.
+> ⚠️ These are **experimental R&D workflows** under active development and testing. Their nodes, models, settings and outputs may change as testing continues.
 
-This repository contains three of Brick Visual's image workflows for ComfyUI. Together they account for about 80% of the jobs run through our internal tool in the last 30 days:
+This repository contains three Brick Visual experiments for evaluating image-processing approaches in ComfyUI:
 
-| Workflow | What it is for | Share of jobs (last 30 days) |
-|---|---|---|
-| [General Enhancement](#1-general-enhancement) | Tile-based refinement of architectural renders, with optional body and face enhancement | ~34% |
-| [Pro Upscale](#2-pro-upscale) | ×2 / ×4 upscaling with SeedVR2 plus an optional Flux detail pass, or a fast single-model engine | ~28% |
-| [Flux 2 Klein + RAW Enhancement](#3-flux-2-klein--raw-enhancement) | Turns a raw render into a finished, photoreal visualization with an internal LoRA | ~19% RAW Enhancement, plus ~5% plain edits |
+| Workflow | Research focus |
+|---|---|
+| [General Enhancement](#1-general-enhancement) | Testing tile-based refinement of architectural renders, with optional body and face enhancement |
+| [Pro Upscale](#2-pro-upscale) | Comparing ×2 / ×4 SeedVR2 upscaling with an optional Flux detail pass against a faster single-model approach |
+| [Flux 2 Klein + RAW Enhancement](#3-flux-2-klein--raw-enhancement) | Exploring photoreal enhancement of raw renders with Flux.2 Klein and an experimental internal LoRA |
 
 Each workflow is provided in two formats:
 
 - **`<name>.json`**: the editor workflow, with subgraphs, groups, notes and toggles. Open it in ComfyUI.
 - **`<name>.api.json`**: the same graph in API format, with the default toggle values. Use it for `/prompt` or serverless deployment.
 
-The graphs reproduce what our internal Gradio app (Momi Forge) sends to our RunPod workers. For every toggle combination, the same processing nodes run with the same inputs and settings as in the app; [Validation](#validation) explains how this was checked. The differences are listed in [docs/workflows.md](docs/workflows.md#differences-from-the-momi-forge-app).
+The graphs preserve the current experimental pipelines in editable and API-ready forms. Every toggle combination has been checked for valid execution paths; [Validation](#validation) explains how this was tested. Implementation notes are listed in [docs/workflows.md](docs/workflows.md#differences-from-the-momi-forge-app).
 
 ---
 
