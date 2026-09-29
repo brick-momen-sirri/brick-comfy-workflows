@@ -1567,14 +1567,14 @@
       ],
       "size": [
         660,
-        320
+        430
       ],
       "flags": {},
       "order": 31,
       "mode": 0,
       "properties": {},
       "widgets_values": [
-        "LTX 2.5 Video Upscale | Experimental R&D\n\nUpload a short video at node 29. Start with frame_load_cap=49 or 97 for a memory check; 0 loads the full clip. Use source dimensions divisible by 32.\n\nInput, conditioning and output use 24 fps. Keep nodes 29, 10 and 40 in sync when changing rate; select_every_nth=1.\n\nLast-frame padding is removed after decoding. Qwen captions ONLY the first frame, even though the saved preset is Video Summary.\n\nModels, installation and limitations: see the repository README and docs/ltx25-video-upscale.md. The supplied DiffVAE is retained; CQdesign recommends the Conv VAE for its own workflow.\n\nStructurally checked; full LTX 2.5 inference has not been verified."
+        "LTX 2.5 Video Upscale | Experimental R&D\n\nUpload a short video at node 29. Start with frame_load_cap=49 or 97 for a memory check; 0 loads the full clip. Use source dimensions divisible by 32.\n\nInput, conditioning and output use 24 fps. Keep nodes 29, 10 and 40 in sync when changing rate; select_every_nth=1.\n\nLast-frame padding is removed after decoding. Qwen captions ONLY the first frame, even though the saved preset is Video Summary.\n\nModels, installation and limitations: see the repository README and docs/ltx25-video-upscale.md. The supplied DiffVAE is retained; CQdesign recommends the Conv VAE for its own workflow.\n\nStructurally checked; full LTX 2.5 inference has not been verified.\n\nCopyright (c) 2026 Brick Visual - original contributions only. Third-party components and upstream material retain their respective rights. See NOTICE.md beside this workflow. This ownership notice does not grant reuse permissions."
       ],
       "title": "Read first - setup and limitations",
       "color": "#432",

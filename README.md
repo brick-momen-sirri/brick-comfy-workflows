@@ -174,6 +174,8 @@ If Stages 1 and 2 are both off, no tiling happens. The original image then goes 
 
 `workflows/ltx25-video-upscale/ltx25_video_upscale.json`
 
+**Copyright © 2026 Brick Visual — original contributions.** See the [authorship and copyright notice](workflows/ltx25-video-upscale/NOTICE.md), which also explains the scope of third-party rights.
+
 **What it does.** Loads a video, pads its frame count for LTX, spatially upscales its latents ×2, and refines them using LTX 2.5 distilled INT8 with the CQ Enhancer V2 LoRA. Qwen3-VL captions the first frame. Tiled decoding is followed by removal of padding and H.264 MP4 output with source audio.
 
 **Inputs:** a short video with dimensions divisible by 32. Upload at node `29`; `input.mp4` is a placeholder. Start with a `frame_load_cap` of 49 or 97 to check memory use.
