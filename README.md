@@ -1,5 +1,7 @@
 # Brick Visual · ComfyUI Workflows
 
+**Copyright © 2026 Brick Visual — original contributions to all workflows and accompanying documentation.** See the [repository-wide authorship and copyright notice](NOTICE.md). Third-party components and upstream material retain their respective rights and terms.
+
 > ⚠️ These are **experimental R&D workflows** under active development and testing. Their nodes, models, settings and outputs may change as testing continues.
 
 This repository contains four R&D workflows for evaluating image and video processing in ComfyUI:
@@ -173,8 +175,6 @@ If Stages 1 and 2 are both off, no tiling happens. The original image then goes 
 ### 4. LTX 2.5 Video Upscale + CQ Enhancement
 
 `workflows/ltx25-video-upscale/ltx25_video_upscale.json`
-
-**Copyright © 2026 Brick Visual — original contributions.** See the [authorship and copyright notice](workflows/ltx25-video-upscale/NOTICE.md), which also explains the scope of third-party rights.
 
 **What it does.** Loads a video, pads its frame count for LTX, spatially upscales its latents ×2, and refines them using LTX 2.5 distilled INT8 with the CQ Enhancer V2 LoRA. Qwen3-VL captions the first frame. Tiled decoding is followed by removal of padding and H.264 MP4 output with source audio.
 

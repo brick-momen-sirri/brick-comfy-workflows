@@ -2,7 +2,7 @@
 
 An experimental video-to-video workflow adapted from the supplied ComfyUI graph. It combines a **2× spatial latent upscale** with a low-denoise LTX 2.5 refinement pass and carries the source audio into the output. It is a separate R&D experiment; the Momi Forge parity checks for the three image workflows do not apply to it.
 
-**Copyright © 2026 Brick Visual — original contributions.** See the [authorship and copyright notice](../workflows/ltx25-video-upscale/NOTICE.md). Third-party components and upstream material retain their respective rights and terms.
+**Copyright © 2026 Brick Visual — original contributions.** See the [repository-wide authorship and copyright notice](../NOTICE.md), which applies to all workflows. Third-party components and upstream material retain their respective rights and terms.
 
 - [Editor workflow](../workflows/ltx25-video-upscale/ltx25_video_upscale.json)
 - [API workflow](../workflows/ltx25-video-upscale/ltx25_video_upscale.api.json)

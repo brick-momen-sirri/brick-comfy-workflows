@@ -713,7 +713,7 @@
       ],
       "size": [
         460,
-        470
+        600
       ],
       "flags": {},
       "order": 5,
@@ -723,7 +723,7 @@
       "title": "About this workflow",
       "properties": {},
       "widgets_values": [
-        "# Pro Upscale (SeedVR2 + Flux)\n\n> ⚠️ **R&D workflow.** Under active development and testing. Not production-ready: expect changes to nodes, defaults and models.\n\n**Engines**\n- **SeedVR2 (default):** pre-scale → tile → SeedVR2 7B → optional Flux enhancement → untile.\n- **Super Fast:** 4xNomos8kDAT model upscale, then resized to the factor. Flux is not used.\n\n**Controls**\n- `Toggle · SeedVR2 Engine` off switches to Super Fast.\n- `Toggle · Flux Enhancement` only applies to the SeedVR2 engine.\n- `Upscale Factor`: 2 or 4 (the values the app exposes).\n- `Flux Creativity`: 10–40 (steps 6–12, denoise 0.10–0.40).\n\nDisabled branches are skipped at run time by lazy **Switch** nodes, so they cost no GPU time."
+        "# Pro Upscale (SeedVR2 + Flux)\n\n> ⚠️ **R&D workflow.** Under active development and testing. Not production-ready: expect changes to nodes, defaults and models.\n\n**Engines**\n- **SeedVR2 (default):** pre-scale → tile → SeedVR2 7B → optional Flux enhancement → untile.\n- **Super Fast:** 4xNomos8kDAT model upscale, then resized to the factor. Flux is not used.\n\n**Controls**\n- `Toggle · SeedVR2 Engine` off switches to Super Fast.\n- `Toggle · Flux Enhancement` only applies to the SeedVR2 engine.\n- `Upscale Factor`: 2 or 4 (the values the app exposes).\n- `Flux Creativity`: 10–40 (steps 6–12, denoise 0.10–0.40).\n\nDisabled branches are skipped at run time by lazy **Switch** nodes, so they cost no GPU time.\n\nCopyright (c) 2026 Brick Visual - original contributions only. Third-party components and upstream material retain their respective rights. See NOTICE.md beside this workflow. This ownership notice does not grant reuse permissions."
       ],
       "color": "#432",
       "bgcolor": "#653"

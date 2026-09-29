@@ -1391,7 +1391,7 @@
       ],
       "size": [
         480,
-        520
+        650
       ],
       "flags": {},
       "order": 7,
@@ -1401,7 +1401,7 @@
       "title": "About this workflow",
       "properties": {},
       "widgets_values": [
-        "# General Enhancement\n\n> ⚠️ **R&D workflow.** Under active development and testing. Not production-ready: expect changes to nodes, defaults and models.\n\n**Stages (toggles)**\n1. **General Enhancement** (default on): SD1.5 epiCRealism refine per 900 px tile, with Qwen3-VL tile captions.\n2. **Advance Details** (off): 1x-ReFocus sharpen blend + Flux (Fluxmania) pass per tile.\n3. **Body & Face Enhancement** (off): FaceDetailer for people, then faces.\n\nStages 1–2 run inside the cropped area and are blended back.\nIf both are off, the original image goes straight to Stage 3 or to the output.\n\n**Mask:** paint in the Load Image **Mask Editor** and enable `Use Painted Mask` to limit stages 1–2 to that area.\n\nDisabled stages are skipped at run time by lazy **Switch** nodes. Every combination of toggles is valid."
+        "# General Enhancement\n\n> ⚠️ **R&D workflow.** Under active development and testing. Not production-ready: expect changes to nodes, defaults and models.\n\n**Stages (toggles)**\n1. **General Enhancement** (default on): SD1.5 epiCRealism refine per 900 px tile, with Qwen3-VL tile captions.\n2. **Advance Details** (off): 1x-ReFocus sharpen blend + Flux (Fluxmania) pass per tile.\n3. **Body & Face Enhancement** (off): FaceDetailer for people, then faces.\n\nStages 1–2 run inside the cropped area and are blended back.\nIf both are off, the original image goes straight to Stage 3 or to the output.\n\n**Mask:** paint in the Load Image **Mask Editor** and enable `Use Painted Mask` to limit stages 1–2 to that area.\n\nDisabled stages are skipped at run time by lazy **Switch** nodes. Every combination of toggles is valid.\n\nCopyright (c) 2026 Brick Visual - original contributions only. Third-party components and upstream material retain their respective rights. See NOTICE.md beside this workflow. This ownership notice does not grant reuse permissions."
       ],
       "color": "#432",
       "bgcolor": "#653"

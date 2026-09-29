@@ -1,5 +1,7 @@
 # Workflow details
 
+**Copyright © 2026 Brick Visual — original contributions.** The [repository-wide notice](../NOTICE.md) applies to all four workflows and their documentation.
+
 Stage-by-stage description of the three image graphs, and how each corresponds to the internal Momi Forge (Gradio) app. The app sends ComfyUI API workflows to RunPod serverless workers. It changes a few values and links per request, depending on the options the user picks. These editor workflows express the same routing with lazy **Switch** nodes, so the same graph works for every option.
 
 ## General Enhancement

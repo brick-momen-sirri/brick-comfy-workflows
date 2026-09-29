@@ -542,7 +542,7 @@
       ],
       "size": [
         460,
-        470
+        600
       ],
       "flags": {},
       "order": 4,
@@ -552,7 +552,7 @@
       "title": "About this workflow",
       "properties": {},
       "widgets_values": [
-        "# Flux.2 Klein 9B · RAW Enhancement\n\n> ⚠️ **R&D workflow.** Under active development and testing. Not production-ready: expect changes to nodes, defaults and models.\n\nTurns a raw architectural render into a finished, photoreal visualization.\n\n**RAW Enhancement on (default)**\n- Loads the **BVFinish** LoRA (strength 1.0).\n- Qwen3-VL writes the prompt from the image (starts with the `bvfinish` trigger).\n- The Edit Prompt box is ignored.\n\n**RAW Enhancement off**\n- Plain Flux.2 Klein image edit driven by the Edit Prompt.\n- No LoRA, no captioning.\n\n4 steps · euler · cfg 1 · ≈1 MP canvas; output is cropped back to the input size."
+        "# Flux.2 Klein 9B · RAW Enhancement\n\n> ⚠️ **R&D workflow.** Under active development and testing. Not production-ready: expect changes to nodes, defaults and models.\n\nTurns a raw architectural render into a finished, photoreal visualization.\n\n**RAW Enhancement on (default)**\n- Loads the **BVFinish** LoRA (strength 1.0).\n- Qwen3-VL writes the prompt from the image (starts with the `bvfinish` trigger).\n- The Edit Prompt box is ignored.\n\n**RAW Enhancement off**\n- Plain Flux.2 Klein image edit driven by the Edit Prompt.\n- No LoRA, no captioning.\n\n4 steps · euler · cfg 1 · ≈1 MP canvas; output is cropped back to the input size.\n\nCopyright (c) 2026 Brick Visual - original contributions only. Third-party components and upstream material retain their respective rights. See NOTICE.md beside this workflow. This ownership notice does not grant reuse permissions."
       ],
       "color": "#432",
       "bgcolor": "#653"

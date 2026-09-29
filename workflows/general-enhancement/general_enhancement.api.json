@@ -199,7 +199,8 @@
     },
     "class_type": "SaveImage",
     "_meta": {
-      "title": "Save Result"
+      "title": "Save Result",
+      "copyright": "Copyright (c) 2026 Brick Visual - original contributions only. Third-party components and upstream material retain their respective rights. See NOTICE.md beside this workflow. This ownership notice does not grant reuse permissions."
     }
   },
   "30": {

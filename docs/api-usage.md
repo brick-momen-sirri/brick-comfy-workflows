@@ -1,5 +1,7 @@
 # API usage
 
+**Copyright © 2026 Brick Visual — original contributions.** All API workflows are covered by the [repository-wide notice](../NOTICE.md); third-party rights and terms remain applicable.
+
 Use the `*.api.json` files for `POST /prompt` or a serverless worker. They are the flattened form of the editor workflows, so nodes inside a subgraph have IDs like `219:138`: `<subgraph node id>:<inner node id>`. These IDs are stable as long as the editor workflow is not restructured.
 
 In the three image workflows:
